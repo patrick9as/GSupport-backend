@@ -1,10 +1,5 @@
 const sql = require('mssql');
 
-console.log(process.env.USER);
-console.log(process.env.PASSWORD);
-console.log(process.env.SERVER);
-console.log(process.env.DATABASE);
-
 const config = {
     user: process.env.USER,
     password: process.env.PASSWORD,
