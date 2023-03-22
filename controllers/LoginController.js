@@ -2,20 +2,29 @@ const sql = require('../db')
 const {Encrypt} = require('../helper')
 
 async function Login(req, res){
-    //const { usuario, senha } = req.body
+    const { Usuario, Senha } = req.body
     console.log(req.body)
 
-    //let query = `select nome, senha, id  from where usuario = ${usuario} and senha ${senha}`
+    let query = `select Codigo, Nome, Senha from sup_usuarios`
+    query += `\nwhere Nome = '${Usuario}' and Senha = '${Senha}'`
+    console.log(query)
 
-    // sql.query(query, (err, result)=>{
-    //     if (err) console.log(`Erro ao fazer login: ${err}`)
-    // })
+    let dados = {Usuario, "token":Senha}
 
-    const senha = "123444"
-    const senhaHash = await Encrypt(senha)
+    sql.query(query, (err, data)=>{
+        if (err) console.log(`Erro ao fazer login: ${err}`)
+        console.log(data.recordset[0].Senha)
+        dados = {
+            usuario: data.recordset[0].Nome,
+            token: data.recordset[0].Senha
+        }
+    })
+
+
+    const senhaHash = await Encrypt(Senha)
     console.log(senhaHash)
-    //const result  = { usuario, senha, senhaHash}
-    res.status(200).json({senhaHash})
+    res.status(200).json({...dados, senhaHash})
+
 }
 
 module.exports = {Login}

@@ -6,9 +6,10 @@ const app = express();
 const cors = require('cors');
 
 app.use(cors());
-app.use(routes);
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(routes);
 
 app.listen(process.env.PORT, ()=>{
     console.log(`servidor rodando na porta: ${process.env.PORT}`);
