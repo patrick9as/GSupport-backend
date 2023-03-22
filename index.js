@@ -3,10 +3,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const routes = require('./routes/atendimentos');
 const app = express();
-var cors = require('cors');
+const cors = require('cors');
 
 app.use(cors());
 app.use(routes);
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
-app.listen(8080);
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.listen(process.env.PORT, ()=>{
+    console.log(`servidor rodando na porta: ${process.env.PORT}`);
+});
