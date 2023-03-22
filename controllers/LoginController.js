@@ -3,11 +3,11 @@ const {Encrypt} = require('../helper')
 
 async function Login(req, res){
     const { Usuario, Senha } = req.body
-    console.log(req.body)
+    //console.log(req.body)
 
     let query = `select Codigo, Nome, Senha from sup_usuarios`
     query += `\nwhere Nome = '${Usuario}' and Senha = '${Senha}'`
-    console.log(query)
+    //console.log(query)
 
     let dados = {Usuario, "token":Senha}
 
@@ -22,7 +22,7 @@ async function Login(req, res){
 
 
     const senhaHash = await Encrypt(Senha)
-    console.log(senhaHash)
+    //console.log(senhaHash)
     res.status(200).json({...dados, senhaHash})
 
 }
