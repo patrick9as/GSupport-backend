@@ -13,7 +13,7 @@ async function Login(req, res){
 
     sql.query(query, (err, data)=>{
         if (err) console.log(`Erro ao fazer login: ${err}`)
-        console.log(data.recordset[0].Senha)
+        // console.log(data.recordset[0].Senha)
         dados = {
             usuario: data.recordset[0].Nome,
             token: data.recordset[0].Senha
