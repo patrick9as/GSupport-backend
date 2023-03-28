@@ -2,11 +2,11 @@ const { FormatDate } = require('../helper');
 const sql = require('../db.js');
 
 
-function Consultar(req, res) {
-    let query;
-    // let { DataInicio, DataFim } = req.query;
-    let { Codigo, PageNumber, Rows, Texto, Usuario, Categoria, Sistema, Plantao, DataInicio, DataFim} = req.body;
-    
+async function Consultar(req, res) {
+    let sqlQueryResult, sqlQueryTotal;
+    let RetQueryResult, RetQueryTotal;
+    let { Codigo, PageNumber, Rows, Texto, Usuario, Categoria, Sistema, Plantao, DataInicio, DataFim } = req.body;
+
     if (DataInicio == '' || DataInicio == undefined)
         DataInicio = new Date().toLocaleDateString('pt-BR')
     else
@@ -17,65 +17,73 @@ function Consultar(req, res) {
     else
         DataFim = FormatDate(DataFim);
 
-    query =  'DECLARE';
-    query += '\n@PageNumber INT,';
-    query += '\n@Rows INT,';
-    query += '\n@Texto VARCHAR(MAX),';
-    query += '\n@Categoria VARCHAR(MAX),';
-    query += '\n@DataInicio DATETIME,';
-    query += '\n@DataFim DATETIME,';
-    query += '\n@Sistema VARCHAR(MAX),';
-    query += '\n@Usuario VARCHAR(MAX);';
-    query += '\n';
-    if (PageNumber != undefined || Rows != undefined) {     
-        query += `\n  SET @PageNumber = ${PageNumber};`;
-        query += `\n  SET @Rows = ${Rows};`;
+    sqlQueryResult = 'DECLARE';
+    sqlQueryResult += '\n@PageNumber INT,';
+    sqlQueryResult += '\n@Rows INT,';
+    sqlQueryResult += '\n@Texto VARCHAR(MAX),';
+    sqlQueryResult += '\n@Categoria VARCHAR(MAX),';
+    sqlQueryResult += '\n@DataInicio DATETIME,';
+    sqlQueryResult += '\n@DataFim DATETIME,';
+    sqlQueryResult += '\n@Sistema VARCHAR(MAX),';
+    sqlQueryResult += '\n@Usuario VARCHAR(MAX);';
+    sqlQueryResult += '\n';
+
+    if (PageNumber != undefined || Rows != undefined) {
+        if (PageNumber != undefined)
+            sqlQueryResult += `\n  SET @PageNumber = ${PageNumber};`;
+        else 
+            sqlQueryResult += `\n  SET @PageNumber = 1;`;
+        
+        if (Rows != undefined)
+            sqlQueryResult += `\n  SET @Rows = ${Rows};`;
+        else
+            sqlQueryResult += `\n  SET @Rows = 10`;
     }
-    if (Texto == undefined) 
-        query += `\n  SET @Texto = '%%';`;
+    if (Texto == undefined)
+        sqlQueryResult += `\n  SET @Texto = '%%';`;
     else
-        query += `\n  SET @Texto = '%${Texto}%';`;
-    if (Usuario == undefined) 
-        query += `\n  SET @Usuario = '%%';`;
+        sqlQueryResult += `\n  SET @Texto = '%${Texto}%';`;
+    if (Usuario == undefined)
+        sqlQueryResult += `\n  SET @Usuario = '%%';`;
     else
-        query += `\n  SET @Usuario = '%${Usuario}%';`;
-    if (Categoria == undefined) 
-        query += `\n  SET @Categoria = '%%';`;
+        sqlQueryResult += `\n  SET @Usuario = '%${Usuario}%';`;
+    if (Categoria == undefined)
+        sqlQueryResult += `\n  SET @Categoria = '%%';`;
     else
-        query += `\n  SET @Categoria = '%${Categoria}%';`;
-        if (Sistema == undefined) 
-        query += `\n  SET @Sistema = '%%';`;
+        sqlQueryResult += `\n  SET @Categoria = '%${Categoria}%';`;
+    if (Sistema == undefined)
+        sqlQueryResult += `\n  SET @Sistema = '%%';`;
     else
-        query += `\n  SET @Sistema = '%${Sistema}%';`;
-    query += `\n  SET @DataInicio = dbo.converterData('${DataInicio}');`;
-    query += `\n  SET @DataFim = dbo.converterDataHora('${DataFim}' + ' 23:59:59');`;
-    query += '\n';
-    query += '\nSELECT sa.* FROM sup_atendimentos sa';
-    // query += '\nINNER JOIN sup_usuarios su';
-    // query += '\nON sa.CodUsuario = su.Codigo';
-    query += '\nWHERE (';
-    query += `\n    ISNULL(sa.Empresa, '') LIKE @Texto`;
-    query += `\n OR ISNULL(sa.Nome,'') LIKE @Texto`;
-    query += `\n OR ISNULL(sa.Codigo,'') LIKE @Texto)`;
-    query += `\nAND DataHora BETWEEN @DataInicio AND @DataFim`;
-    if (Plantao != undefined) 
-        query += `\nAND sa.Plantao = ${Plantao}`;
-    query += `\nAND ISNULL(sa.NomeUsuario, '') LIKE @Usuario`;
+        sqlQueryResult += `\n  SET @Sistema = '%${Sistema}%';`;
+
+    sqlQueryResult += `\n  SET @DataInicio = dbo.converterData('${DataInicio}');`;
+    sqlQueryResult += `\n  SET @DataFim = dbo.converterDataHora('${DataFim}' + ' 23:59:59');`;
+    sqlQueryResult += '\n';
+    sqlQueryResult += '\nSELECT sa.* FROM sup_atendimentos sa';
+    sqlQueryResult += '\nWHERE (';
+    sqlQueryResult += `\n    ISNULL(sa.Empresa, '') LIKE @Texto`;
+    sqlQueryResult += `\n OR ISNULL(sa.Nome,'') LIKE @Texto`;
+    sqlQueryResult += `\n OR ISNULL(sa.Codigo,'') LIKE @Texto)`;
+    sqlQueryResult += `\nAND DataHora BETWEEN @DataInicio AND @DataFim`;
+
+    if (Plantao != undefined)
+        sqlQueryResult += `\nAND sa.Plantao = ${Plantao}`;
+    sqlQueryResult += `\nAND ISNULL(sa.NomeUsuario, '') LIKE @Usuario`;
     if (Codigo != undefined && Codigo != '')
-        query += `\nAND sa.Codigo = ${Codigo}`;
-    query += `\nORDER BY sa.Codigo DESC`; 
-    if (PageNumber != undefined || Rows != undefined) {            
-        query += `\nOFFSET (@PageNumber - 1) * @Rows`;    
-        query += `\nROWS FETCH NEXT @Rows ROWS ONLY`;
+        sqlQueryResult += `\nAND sa.Codigo = ${Codigo}`;
+    sqlQueryResult += `\nORDER BY sa.Codigo DESC`;
+
+    sqlQueryTotal = sqlQueryResult;
+
+    if (PageNumber != undefined || Rows != undefined) {
+        sqlQueryResult += `\nOFFSET (@PageNumber - 1) * @Rows`;
+        sqlQueryResult += `\nROWS FETCH NEXT @Rows ROWS ONLY`;
     }
 
-    console.log(req.body);
-    console.log(query);
+    RetQueryResult = await sql.query(sqlQueryResult);
+    RetQueryTotal = await sql.query(sqlQueryTotal);
 
-    sql.query(query, (err, result) => {
-        if (err) console.log(err);
-        res.status(200).send(JSON.stringify({"Total": result.recordset.length, Result: result.recordset }));
-    });
+    res.status(200).send(JSON.stringify({ "Total": RetQueryTotal.recordset.length, Result: RetQueryResult.recordset }));
 }
 
 function Inserir(req, res) {
