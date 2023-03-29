@@ -95,15 +95,15 @@ async function Inserir(req, res) {
     let { CodUsuario, NomeUsuario, CodEmpresa, Nome, Empresa, TipoPessoa, Problema, Solucao, Sistema, TipoChamado, DataHora, DataHoraFim, DataHoraLancamento, Categoria, SubCategoria, Plantao, Privado, Ticket, Analise, Status, Terminal, Controle, /*ImagemDescricao*/ } = req.body;
     const file = req.file
     const imageName = generateUuidImage()
-    console.log(`imageName: ${imageName}`);
+    // console.log(`imageName: ${imageName}`);
 
     const ext = getExtension(file.mimetype)
-    console.log(`getExtension: ${ext}`);
+    // console.log(`getExtension: ${ext}`);
 
     const imageWebp = await convertImageToWebp(file.buffer)
-    console.log(`imageWebp: ${imageWebp.byteLength}`)
+    // console.log(`imageWebp: ${imageWebp.byteLength}`)
 
-    console.log(file);
+    // console.log(file);
 
     try {
         await uploadFile(imageWebp, imageName, file.mimetype, ext)
