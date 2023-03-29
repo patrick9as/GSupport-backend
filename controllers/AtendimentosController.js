@@ -64,19 +64,22 @@ async function Consultar(req, res) {
     sqlQueryResult += `\n  SET @DataInicio = dbo.converterData('${DataInicio}');`;
     sqlQueryResult += `\n  SET @DataFim = dbo.converterDataHora('${DataFim}' + ' 23:59:59');`;
     sqlQueryResult += '\n';
-    sqlQueryResult += '\nSELECT sa.* FROM sup_atendimentos sa';
+    sqlQueryResult += '\nSELECT a.* FROM sup.atendimentos a';
+    sqlQueryResult += '\nINNER JOIN sup.empresas e ON a.CodEmpresa = e.Codigo';
+    sqlQueryResult += '\nINNER JOIN sup.usuarios u ON a.CodUsuario = u.Codigo';
     sqlQueryResult += '\nWHERE (';
-    sqlQueryResult += `\n    ISNULL(sa.Empresa, '') LIKE @Texto`;
-    sqlQueryResult += `\n OR ISNULL(sa.Nome,'') LIKE @Texto`;
-    sqlQueryResult += `\n OR ISNULL(sa.Codigo,'') LIKE @Texto)`;
-    sqlQueryResult += `\nAND DataHora BETWEEN @DataInicio AND @DataFim`;
+    sqlQueryResult += `\n    ISNULL(e.NomeFantasia, '') LIKE @Texto`;
+    sqlQueryResult += `\n OR ISNULL(e.RazaoSocial, '') LIKE @Texto`;
+    sqlQueryResult += `\n OR ISNULL(a.NomeCliente,'') LIKE @Texto`;
+    sqlQueryResult += `\n OR ISNULL(a.Codigo,'') LIKE @Texto)`;
+    sqlQueryResult += `\nAND a.DataInicio BETWEEN @DataInicio AND @DataFim`;
 
     if (Plantao != undefined)
-        sqlQueryResult += `\nAND sa.Plantao = ${Plantao}`;
-    sqlQueryResult += `\nAND ISNULL(sa.NomeUsuario, '') LIKE @Usuario`;
+        sqlQueryResult += `\nAND a.Plantao = ${Plantao}`;
+    sqlQueryResult += `\nAND ISNULL(u.Usuario, '') LIKE @Usuario`;
     if (Codigo != undefined && Codigo != '')
-        sqlQueryResult += `\nAND sa.Codigo = ${Codigo}`;
-    sqlQueryResult += `\nORDER BY sa.Codigo DESC`;
+        sqlQueryResult += `\nAND a.Codigo = ${Codigo}`;
+    sqlQueryResult += `\nORDER BY a.Codigo DESC`;
 
     sqlQueryTotal = sqlQueryResult;
 
@@ -84,7 +87,7 @@ async function Consultar(req, res) {
         sqlQueryResult += `\nOFFSET (@PageNumber - 1) * @Rows`;
         sqlQueryResult += `\nROWS FETCH NEXT @Rows ROWS ONLY`;
     }
-
+    console.log(sqlQueryResult);
     RetQueryResult = await sql.query(sqlQueryResult);
     RetQueryTotal = await sql.query(sqlQueryTotal);
 

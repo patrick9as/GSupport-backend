@@ -2,7 +2,7 @@ const sql = require('../db')
 
 async function Consultar(req, res){
     const {id} = req.query
-    const query = id ? `select * from sup_usuarios where codigo = ${id}` : 'select * from sup_usuarios' 
+    const query = id ? `select * from sup.usuarios where codigo = ${id}` : 'select * from sup.usuarios' 
     try {
         let usuarios = await sql.query(query)
         

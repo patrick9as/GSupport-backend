@@ -5,8 +5,8 @@ async function Login(req, res){
     const { Usuario, Senha } = req.body
     //console.log(req.body)
 
-    let query = `select Codigo, Nome, Senha from sup_usuarios`
-    query += `\nwhere Nome = '${Usuario}' and Senha = '${Senha}'`
+    let query = `select Codigo, Usuario, Senha from sup.usuarios`
+    query += `\nwhere Usuario = '${Usuario}' and Senha = '${Senha}'`
     //console.log(query)
 
     let dados = {Usuario, "token":Senha}
