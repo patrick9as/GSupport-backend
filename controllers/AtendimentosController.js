@@ -1,5 +1,10 @@
-const { FormatDate } = require('../helper');
+const { FormatDate, 
+        convertImageToWebp, 
+        generateUuidImage, 
+        getExtension 
+        } = require('../helper');
 const sql = require('../db.js');
+const { uploadFile, getObjectSignedUrl } = require('../aws/s3');
 
 
 async function Consultar(req, res) {
@@ -86,8 +91,43 @@ async function Consultar(req, res) {
     res.status(200).send(JSON.stringify({ "Total": RetQueryTotal.recordset.length, Result: RetQueryResult.recordset }));
 }
 
-function Inserir(req, res) {
-    let { CodUsuario, NomeUsuario, CodEmpresa, Nome, Empresa, TipoPessoa, Problema, Solucao, Sistema, TipoChamado, DataHora, DataHoraFim, DataHoraLancamento, Categoria, SubCategoria, Plantao, Privado, Ticket, Analise, Status, Terminal, Controle } = req.body;
+async function Inserir(req, res) {
+    let { CodUsuario, NomeUsuario, CodEmpresa, Nome, Empresa, TipoPessoa, Problema, Solucao, Sistema, TipoChamado, DataHora, DataHoraFim, DataHoraLancamento, Categoria, SubCategoria, Plantao, Privado, Ticket, Analise, Status, Terminal, Controle, /*ImagemDescricao*/ } = req.body;
+    const file = req.file
+    const imageName = generateUuidImage()
+    console.log(`imageName: ${imageName}`);
+
+    const ext = getExtension(file.mimetype)
+    console.log(`getExtension: ${ext}`);
+
+    const imageWebp = await convertImageToWebp(file.buffer)
+    console.log(`imageWebp: ${imageWebp.byteLength}`)
+
+    console.log(file);
+
+    try {
+        await uploadFile(imageWebp, imageName, file.mimetype, ext)
+        const fullName = `${imageName}.${ext}`
+        const imagemUrl = await getObjectSignedUrl(fullName)
+        
+        res.send({
+            imageName,
+            ext,
+            originalSize: file.size, 
+            originalName: file.originalname,
+            imageWebp: imageWebp.byteLength,
+            newName: `${imageName}.${ext}`,
+            imagemUrl 
+        })
+    } catch (error) {
+        res.send({
+            erro: `Erro ao fazer upload de imagem `, 
+            motivo: error
+        })
+    }
+
+    //comentei porque conta da tabela do banco
+    /*
     let query;
 
     query = 'INSERT INTO sup_atendimentos(CodUsuario, NomeUsuario, CodEmpresa, Nome, Empresa, TipoPessoa, Problema, Solucao, Sistema, TipoChamado, DataHora, DataHoraFim, DataHoraLancamento, Categoria, SubCategoria, Plantao, Privado, Ticket, Analise, Status, Terminal, Controle)';
@@ -97,6 +137,7 @@ function Inserir(req, res) {
         if (err) console.log(err);
         res.status(201).send('OK!');
     });
+    */
 }
 
 function Atualizar(req, res) {
