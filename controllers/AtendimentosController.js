@@ -1,97 +1,17 @@
-const { FormatDate, 
-        convertImageToWebp, 
-        generateUuidImage, 
-        getExtension 
-        } = require('../helper');
+const { 
+    convertImageToWebp, 
+    generateUuidImage, 
+    getExtension 
+    } = require('../helper');
+const { 
+    qryAtendimentos,
+    qryTotal
+    } = require('../model/AtendimentosModel');
 const sql = require('../db.js');
 const { uploadFile, getObjectSignedUrl } = require('../aws/s3');
 
-
 async function Consultar(req, res) {
-    let sqlQueryResult, sqlQueryTotal;
-    let RetQueryResult, RetQueryTotal;
-    let { Codigo, PageNumber, Rows, Texto, Usuario, Categoria, Sistema, Plantao, DataInicio, DataFim } = req.body;
-
-    if (DataInicio == '' || DataInicio == undefined)
-        DataInicio = new Date().toLocaleDateString('pt-BR')
-    else
-        DataInicio = FormatDate(DataInicio);
-
-    if (DataFim == '' || DataFim == undefined)
-        DataFim = new Date().toLocaleDateString('pt-BR');
-    else
-        DataFim = FormatDate(DataFim);
-
-    sqlQueryResult = 'DECLARE';
-    sqlQueryResult += '\n@PageNumber INT,';
-    sqlQueryResult += '\n@Rows INT,';
-    sqlQueryResult += '\n@Texto VARCHAR(MAX),';
-    sqlQueryResult += '\n@Categoria VARCHAR(MAX),';
-    sqlQueryResult += '\n@DataInicio DATETIME,';
-    sqlQueryResult += '\n@DataFim DATETIME,';
-    sqlQueryResult += '\n@Sistema VARCHAR(MAX),';
-    sqlQueryResult += '\n@Usuario VARCHAR(MAX);';
-    sqlQueryResult += '\n';
-
-    if (PageNumber != undefined || Rows != undefined) {
-        if (PageNumber != undefined)
-            sqlQueryResult += `\n  SET @PageNumber = ${PageNumber};`;
-        else 
-            sqlQueryResult += `\n  SET @PageNumber = 1;`;
-        
-        if (Rows != undefined)
-            sqlQueryResult += `\n  SET @Rows = ${Rows};`;
-        else
-            sqlQueryResult += `\n  SET @Rows = 10`;
-    }
-    if (Texto == undefined)
-        sqlQueryResult += `\n  SET @Texto = '%%';`;
-    else
-        sqlQueryResult += `\n  SET @Texto = '%${Texto}%';`;
-    if (Usuario == undefined)
-        sqlQueryResult += `\n  SET @Usuario = '%%';`;
-    else
-        sqlQueryResult += `\n  SET @Usuario = '%${Usuario}%';`;
-    if (Categoria == undefined)
-        sqlQueryResult += `\n  SET @Categoria = '%%';`;
-    else
-        sqlQueryResult += `\n  SET @Categoria = '%${Categoria}%';`;
-    if (Sistema == undefined)
-        sqlQueryResult += `\n  SET @Sistema = '%%';`;
-    else
-        sqlQueryResult += `\n  SET @Sistema = '%${Sistema}%';`;
-
-    sqlQueryResult += `\n  SET @DataInicio = dbo.converterData('${DataInicio}');`;
-    sqlQueryResult += `\n  SET @DataFim = dbo.converterDataHora('${DataFim}' + ' 23:59:59');`;
-    sqlQueryResult += '\n';
-    sqlQueryResult += '\nSELECT a.* FROM sup.atendimentos a';
-    sqlQueryResult += '\nINNER JOIN sup.empresas e ON a.CodEmpresa = e.Codigo';
-    sqlQueryResult += '\nINNER JOIN sup.usuarios u ON a.CodUsuario = u.Codigo';
-    sqlQueryResult += '\nWHERE (';
-    sqlQueryResult += `\n    ISNULL(e.NomeFantasia, '') LIKE @Texto`;
-    sqlQueryResult += `\n OR ISNULL(e.RazaoSocial, '') LIKE @Texto`;
-    sqlQueryResult += `\n OR ISNULL(a.NomeCliente,'') LIKE @Texto`;
-    sqlQueryResult += `\n OR ISNULL(a.Codigo,'') LIKE @Texto)`;
-    sqlQueryResult += `\nAND a.DataInicio BETWEEN @DataInicio AND @DataFim`;
-
-    if (Plantao != undefined)
-        sqlQueryResult += `\nAND a.Plantao = ${Plantao}`;
-    sqlQueryResult += `\nAND ISNULL(u.Usuario, '') LIKE @Usuario`;
-    if (Codigo != undefined && Codigo != '')
-        sqlQueryResult += `\nAND a.Codigo = ${Codigo}`;
-    sqlQueryResult += `\nORDER BY a.Codigo DESC`;
-
-    sqlQueryTotal = sqlQueryResult;
-
-    if (PageNumber != undefined || Rows != undefined) {
-        sqlQueryResult += `\nOFFSET (@PageNumber - 1) * @Rows`;
-        sqlQueryResult += `\nROWS FETCH NEXT @Rows ROWS ONLY`;
-    }
-    console.log(sqlQueryResult);
-    RetQueryResult = await sql.query(sqlQueryResult);
-    RetQueryTotal = await sql.query(sqlQueryTotal);
-
-    res.status(200).send(JSON.stringify({ "Total": RetQueryTotal.recordset.length, Result: RetQueryResult.recordset }));
+    res.status(200).send(JSON.stringify({ 'Total': await qryTotal(req), 'Result': await qryAtendimentos(req)} ));
 }
 
 async function Inserir(req, res) {
@@ -112,19 +32,19 @@ async function Inserir(req, res) {
         await uploadFile(imageWebp, imageName, file.mimetype, ext)
         const fullName = `${imageName}.${ext}`
         const imagemUrl = await getObjectSignedUrl(fullName)
-        
+
         res.send({
             imageName,
             ext,
-            originalSize: file.size, 
+            originalSize: file.size,
             originalName: file.originalname,
             imageWebp: imageWebp.byteLength,
             newName: `${imageName}.${ext}`,
-            imagemUrl 
+            imagemUrl
         })
     } catch (error) {
         res.send({
-            erro: `Erro ao fazer upload de imagem `, 
+            erro: `Erro ao fazer upload de imagem `,
             motivo: error
         })
     }
@@ -177,4 +97,8 @@ function Atualizar(req, res) {
     });
 }
 
-module.exports = { Consultar, Inserir, Atualizar }
+module.exports = { 
+    Consultar,
+    Inserir,
+    Atualizar 
+}
