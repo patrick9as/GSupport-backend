@@ -11,6 +11,8 @@ const sql = require('../db.js');
 const { uploadFile, getObjectSignedUrl } = require('../aws/s3');
 
 async function Consultar(req, res) {
+
+    
     res.status(200).send(JSON.stringify({ 'Total': await qryTotal(req), 'Result': await qryAtendimentos(req)} ));
 }
 
