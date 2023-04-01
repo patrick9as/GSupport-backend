@@ -1,7 +1,10 @@
 const { 
     convertImageToWebp, 
     generateUuidImage, 
-    getExtension 
+    getExtension,
+    validarParametro,
+    setTextoSQL,
+    setDataSQL
     } = require('../helper');
 const { 
     qryAtendimentos,
@@ -11,9 +14,34 @@ const sql = require('../db.js');
 const { uploadFile, getObjectSignedUrl } = require('../aws/s3');
 
 async function Consultar(req, res) {
+    let obj = {
+        Codigo = null,
+        PageNumber = null,
+        Rows = null,
+        Texto = null,
+        Assunto = null,
+        DataInicio = null,
+        DataFim = null,
+        Sistema = null,
+        MeioComunicacao = null,
+        Usuario = null,
+        Plantao = null
+    } = req.body;
 
-    
-    res.status(200).send(JSON.stringify({ 'Total': await qryTotal(req), 'Result': await qryAtendimentos(req)} ));
+    obj.Codigo = setTextoSQL(obj.Codigo);
+    obj.Texto = setTextoSQL(obj.Texto);
+    obj.Assunto = setTextoSQL(obj.Assunto);
+    obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
+    obj.DataFim = `'${setDataSQL(obj.DataFim)} 23:59:59'`;
+    obj.Sistema = setTextoSQL(obj.Sistema);
+    obj.MeioComunicacao = setTextoSQL(obj.MeioComunicacao);
+    obj.Usuario = setTextoSQL(obj.Usuario);
+    if (! validarParametro(obj.PageNumber)) obj.PageNumber = 1;
+    if (! validarParametro(obj.Plantao)) obj.Plantao = -1;
+    if (! validarParametro(obj.Rows)) obj.Rows = await qryTotal(obj);
+    if (obj.Rows == 0) obj.Rows = 10;
+
+    res.status(200).send(JSON.stringify({ 'Total': await qryTotal(obj), 'Result': await qryAtendimentos(obj)} ));
 }
 
 async function Inserir(req, res) {

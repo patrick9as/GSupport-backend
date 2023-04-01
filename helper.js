@@ -31,12 +31,44 @@ async function convertImageToWebp(file){
     return result
 }
 
+function setTextoSQL(texto) {
+    if (texto == null || texto == undefined)
+        texto = `'%%'`;
+    else
+        texto = `'${texto}'`;
+    return texto;
+}
 
+function setDataSQL(data) {
+    if (data == null || data == undefined) {
+        const dataAtual = new Date();
+        const ano = dataAtual.getFullYear();
+        const mes = ('0' + (dataAtual.getMonth() + 1)).slice(-2);
+        const dia = ('0' + dataAtual.getDate()).slice(-2);
+        data = `${mes}/${dia}/${ano}`;
+    }
+    else {
+        const dataObj = new Date(Date.parse(data.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')));
+        data = `${dataObj.getFullYear()}-${('0' + (dataObj.getMonth() + 1)).slice(-2)}-${('0' + dataObj.getDate()).slice(-2)}`;
+    }
+
+    return data;
+}
+
+function validarParametro(field) {
+    if (field == null || field == undefined)
+        return false;
+    else
+        return true;
+}
 
 module.exports = {
     FormatDate,
     Encrypt,
     generateUuidImage,
     getExtension,
-    convertImageToWebp
+    convertImageToWebp,
+    setTextoSQL,
+    setDataSQL,
+    validarParametro
 };
