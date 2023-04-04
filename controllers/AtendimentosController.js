@@ -8,17 +8,19 @@ const {
     } = require('../helper');
 const { 
     qryAtendimentos,
-    qryTotal
+    qryTotal,
+    qryInsert,
+    qryInsertImagem
     } = require('../model/AtendimentosModel');
 const sql = require('../db.js');
-const { uploadFile, getObjectSignedUrl } = require('../aws/s3');
 
 async function Consultar(req, res) {
     let obj = {
         Codigo = null,
         PageNumber = null,
         Rows = null,
-        Texto = null,
+        Problema = null,
+        Solucao = null,
         Assunto = null,
         DataInicio = null,
         DataFim = null,
@@ -29,7 +31,8 @@ async function Consultar(req, res) {
     } = req.body;
 
     obj.Codigo = setTextoSQL(obj.Codigo);
-    obj.Texto = setTextoSQL(obj.Texto);
+    obj.Problema = setTextoSQL(obj.Problema);
+    obj.Solucao = setTextoSQL(obj.Solucao);
     obj.Assunto = setTextoSQL(obj.Assunto);
     obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
     obj.DataFim = `'${setDataSQL(obj.DataFim)} 23:59:59'`;
@@ -45,7 +48,37 @@ async function Consultar(req, res) {
 }
 
 async function Inserir(req, res) {
-    let { CodUsuario, NomeUsuario, CodEmpresa, Nome, Empresa, TipoPessoa, Problema, Solucao, Sistema, TipoChamado, DataHora, DataHoraFim, DataHoraLancamento, Categoria, SubCategoria, Plantao, Privado, Ticket, Analise, Status, Terminal, Controle, /*ImagemDescricao*/ } = req.body;
+    let obj = {
+        CodUsuario = null,
+        CodEmpresa = null,
+        NomeCliente = null,
+        Problema = null,
+        Solucao = null,
+        Assunto = null,
+        CodSistema = null,
+        CodMeioComunicacao = null,
+        DataCriacao = null,
+        DataInicio = null,
+        DataFim = null,
+        Plantao = null
+    } = JSON.parse(req.body.data);
+
+    obj.CodUsuario = setTextoSQL(obj.CodUsuario);
+    obj.CodEmpresa = setTextoSQL(obj.CodEmpresa);
+    obj.NomeCliente = setTextoSQL(obj.NomeCliente);
+    obj.Problema = setTextoSQL(obj.Problema);
+    obj.Solucao = setTextoSQL(obj.Solucao);
+    obj.Assunto = setTextoSQL(obj.Assunto);
+    obj.CodSistema = setTextoSQL(obj.CodSistema);
+    obj.CodMeioComunicacao = setTextoSQL(CodMeioComunicacao);
+    obj.DataCriacao = `'${setDataSQL(obj.DataCriacao)}'`;
+    obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
+    obj.DataFim = `'${setDataSQL(obj.DataFim)} 23:59:59'`;
+    if (! validarParametro(obj.Plantao)) obj.Plantao = 0;
+
+    // console.log('obj\n\n');
+    // console.log(obj.CodEmpresa);
+    // console.log('CodEmpresa:' + obj.CodEmpresa + '\nCodEmpresa do roq.body.data:' + req.body.data.CodEmpresa);
     const file = req.file
     const imageName = generateUuidImage();
     // console.log(`imageName: ${imageName}`);
@@ -55,42 +88,15 @@ async function Inserir(req, res) {
 
     const imageWebp = await convertImageToWebp(file.buffer);
     // console.log(`imageWebp: ${imageWebp.byteLength}`)
-
     // console.log(file);
 
-    try {
-        await uploadFile(imageWebp, imageName, file.mimetype, ext)
-        const fullName = `${imageName}.${ext}`
-        const imagemUrl = await getObjectSignedUrl(fullName)
-
-        res.send({
-            imageName,
-            ext,
-            originalSize: file.size,
-            originalName: file.originalname,
-            imageWebp: imageWebp.byteLength,
-            newName: `${imageName}.${ext}`,
-            imagemUrl
-        })
-    } catch (error) {
-        res.send({
-            erro: `Erro ao fazer upload de imagem `,
-            motivo: error
-        })
+    if (file != undefined) {
+        const [resAtendimento, resImagem] = await Promise.all([qryInsert(obj), qryInsertImagem(imageName, ext, imageWebp, file)]);
+        res.status(201).send({resAtendimento, resImagem});
+    } else {
+        const resAtendimento = await qryInsert(obj);
+        res.status(201).send(resAtendimento);
     }
-
-    //comentei porque conta da tabela do banco
-    /*
-    let query;
-
-    query = 'INSERT INTO sup_atendimentos(CodUsuario, NomeUsuario, CodEmpresa, Nome, Empresa, TipoPessoa, Problema, Solucao, Sistema, TipoChamado, DataHora, DataHoraFim, DataHoraLancamento, Categoria, SubCategoria, Plantao, Privado, Ticket, Analise, Status, Terminal, Controle)';
-    query += `\nVALUES (${CodUsuario}, '${NomeUsuario}', ${CodEmpresa}, '${Nome}', '${Empresa}', '${TipoPessoa}', '${Problema}', '${Solucao}', '${Sistema}', '${TipoChamado}', dbo.ConverterDataHora('${DataHora}'), dbo.ConverterDataHora('${DataHoraFim}'), dbo.ConverterDataHora('${DataHoraLancamento}'), '${Categoria}', '${SubCategoria}', ${Plantao}, ${Privado}, ${Ticket}, ${Analise}, '${Status}', ${Terminal}, '${Controle}')`;
-
-    sql.query(query, (err, result) => {
-        if (err) console.log(err);
-        res.status(201).send('OK!');
-    });
-    */
 }
 
 function Atualizar(req, res) {
