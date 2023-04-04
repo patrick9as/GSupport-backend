@@ -38,22 +38,22 @@ async function Consultar(req, res) {
     obj.Usuario = setTextoSQL(obj.Usuario);
     if (! validarParametro(obj.PageNumber)) obj.PageNumber = 1;
     if (! validarParametro(obj.Plantao)) obj.Plantao = -1;
-    if (! validarParametro(obj.Rows)) obj.Rows = await qryTotal(obj);
-    if (obj.Rows == 0) obj.Rows = 10;
+    if (! validarParametro(obj.Rows) || obj.Rows <= 0) obj.Rows = 5;
 
-    res.status(200).send(JSON.stringify({ 'Total': await qryTotal(obj), 'Result': await qryAtendimentos(obj)} ));
+    const [resTotal, resAtendimento] = await Promise.all([qryTotal(obj), qryAtendimentos(obj)])
+    res.status(200).send(JSON.stringify({ 'Total': resTotal, 'Result': resAtendimento} ));
 }
 
 async function Inserir(req, res) {
     let { CodUsuario, NomeUsuario, CodEmpresa, Nome, Empresa, TipoPessoa, Problema, Solucao, Sistema, TipoChamado, DataHora, DataHoraFim, DataHoraLancamento, Categoria, SubCategoria, Plantao, Privado, Ticket, Analise, Status, Terminal, Controle, /*ImagemDescricao*/ } = req.body;
     const file = req.file
-    const imageName = generateUuidImage()
+    const imageName = generateUuidImage();
     // console.log(`imageName: ${imageName}`);
 
-    const ext = getExtension(file.mimetype)
+    const ext = getExtension(file.mimetype);
     // console.log(`getExtension: ${ext}`);
 
-    const imageWebp = await convertImageToWebp(file.buffer)
+    const imageWebp = await convertImageToWebp(file.buffer);
     // console.log(`imageWebp: ${imageWebp.byteLength}`)
 
     // console.log(file);

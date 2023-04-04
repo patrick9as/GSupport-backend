@@ -21,8 +21,7 @@ async function qryTotal(obj) {
     sqlQueryTotal += `${obj.Codigo}, 1, (SELECT COUNT(Codigo) FROM sup.atendimentos), `;
     sqlQueryTotal += `${obj.Texto}, ${obj.Assunto}, ${obj.DataInicio}, ${obj.DataFim}, `;
     sqlQueryTotal += `${obj.Sistema}, ${obj.MeioComunicacao}, ${obj.Usuario}, ${obj.Plantao})`;
-
-    console.log(sqlQueryTotal);
+    
     retQueryTotal = await sql.query( sqlQueryTotal );
     return retQueryTotal.recordset[0].Total;
 } 
