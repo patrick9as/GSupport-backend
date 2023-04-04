@@ -76,19 +76,11 @@ async function Inserir(req, res) {
     obj.DataFim = `'${setDataSQL(obj.DataFim)} 23:59:59'`;
     if (! validarParametro(obj.Plantao)) obj.Plantao = 0;
 
-    // console.log('obj\n\n');
-    // console.log(obj.CodEmpresa);
-    // console.log('CodEmpresa:' + obj.CodEmpresa + '\nCodEmpresa do roq.body.data:' + req.body.data.CodEmpresa);
     const file = req.file
     const imageName = generateUuidImage();
-    // console.log(`imageName: ${imageName}`);
-
     const ext = getExtension(file.mimetype);
-    // console.log(`getExtension: ${ext}`);
 
     const imageWebp = await convertImageToWebp(file.buffer);
-    // console.log(`imageWebp: ${imageWebp.byteLength}`)
-    // console.log(file);
 
     if (file != undefined) {
         const [resAtendimento, resImagem] = await Promise.all([qryInsert(obj), qryInsertImagem(imageName, ext, imageWebp, file)]);
