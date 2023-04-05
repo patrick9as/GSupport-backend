@@ -11,6 +11,7 @@ async function qryAtendimentos(obj) {
     script += `${obj.MeioComunicacao}, ${obj.Usuario}, `;
     script += `${obj.Plantao})`;
 
+    console.log('\nscript da consulta:\n' + script)
     retorno = await sql.query(script);
     return retorno.recordset;
 }
@@ -23,6 +24,7 @@ async function qryTotal(obj) {
     script += `${obj.Texto}, ${obj.Assunto}, ${obj.DataInicio}, ${obj.DataFim}, `;
     script += `${obj.Sistema}, ${obj.MeioComunicacao}, ${obj.Usuario}, ${obj.Plantao})`;
 
+    console.log('\nscript do total:\n' + script)
     retorno = await sql.query(script);
     return retorno.recordset[0].Total;
 } 
@@ -33,9 +35,9 @@ async function qryInsert(obj) {
     script = 'INSERT INTO sup.atendimentos('
     script += '\n  CodUsuario, CodEmpresa, NomeCliente, Problema, Solucao, CodSistema, CodMeioComunicacao, DataCriacao, DataInicio, DataFim, Assunto, Plantao)';
     script += `\n  VALUES (${obj.CodUsuario}, ${obj.CodEmpresa}, ${obj.NomeCliente}, ${obj.Problema}, ${obj.Solucao}, ${obj.CodSistema}, ${obj.CodMeioComunicacao}, ${obj.DataCriacao}, ${obj.DataInicio}, ${obj.DataFim}, ${obj.Assunto}, ${obj.Plantao})`;
-    console.log('script\n\n' + script);
+    
+    console.log('\nscript do insert:\n' + script);
     retorno = await sql.query(script);
-    console.log('retorno do async\n\n' + retorno.rowsAffected.length);
     return retorno.rowsAffected.length;
 }
 

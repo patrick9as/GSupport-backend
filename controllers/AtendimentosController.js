@@ -19,8 +19,7 @@ async function Consultar(req, res) {
         Codigo = null,
         PageNumber = null,
         Rows = null,
-        Problema = null,
-        Solucao = null,
+        Texto = null,
         Assunto = null,
         DataInicio = null,
         DataFim = null,
@@ -31,8 +30,7 @@ async function Consultar(req, res) {
     } = req.body;
 
     obj.Codigo = setTextoSQL(obj.Codigo);
-    obj.Problema = setTextoSQL(obj.Problema);
-    obj.Solucao = setTextoSQL(obj.Solucao);
+    obj.Texto = setTextoSQL(obj.Texto);
     obj.Assunto = setTextoSQL(obj.Assunto);
     obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
     obj.DataFim = `'${setDataSQL(obj.DataFim)} 23:59:59'`;
@@ -48,47 +46,52 @@ async function Consultar(req, res) {
 }
 
 async function Inserir(req, res) {
-    let obj = {
-        CodUsuario = null,
-        CodEmpresa = null,
-        NomeCliente = null,
-        Problema = null,
-        Solucao = null,
-        Assunto = null,
-        CodSistema = null,
-        CodMeioComunicacao = null,
-        DataCriacao = null,
-        DataInicio = null,
-        DataFim = null,
-        Plantao = null
-    } = JSON.parse(req.body.data);
+    try {
+        let obj = {
+            CodUsuario = null,
+            CodEmpresa = null,
+            NomeCliente = null,
+            Problema = null,
+            Solucao = null,
+            Assunto = null,
+            CodSistema = null,
+            CodMeioComunicacao = null,
+            DataCriacao = null,
+            DataInicio = null,
+            DataFim = null,
+            Plantao = null
+        } = JSON.parse(req.body.data);
 
-    obj.CodUsuario = setTextoSQL(obj.CodUsuario);
-    obj.CodEmpresa = setTextoSQL(obj.CodEmpresa);
-    obj.NomeCliente = setTextoSQL(obj.NomeCliente);
-    obj.Problema = setTextoSQL(obj.Problema);
-    obj.Solucao = setTextoSQL(obj.Solucao);
-    obj.Assunto = setTextoSQL(obj.Assunto);
-    obj.CodSistema = setTextoSQL(obj.CodSistema);
-    obj.CodMeioComunicacao = setTextoSQL(CodMeioComunicacao);
-    obj.DataCriacao = `'${setDataSQL(obj.DataCriacao)}'`;
-    obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
-    obj.DataFim = `'${setDataSQL(obj.DataFim)} 23:59:59'`;
-    if (! validarParametro(obj.Plantao)) obj.Plantao = 0;
+        obj.CodUsuario = setTextoSQL(obj.CodUsuario);
+        obj.CodEmpresa = setTextoSQL(obj.CodEmpresa);
+        obj.NomeCliente = setTextoSQL(obj.NomeCliente);
+        obj.Problema = setTextoSQL(obj.Problema);
+        obj.Solucao = setTextoSQL(obj.Solucao);
+        obj.Assunto = setTextoSQL(obj.Assunto);
+        obj.CodSistema = setTextoSQL(obj.CodSistema);
+        obj.CodMeioComunicacao = setTextoSQL(CodMeioComunicacao);
+        obj.DataCriacao = `'${setDataSQL(obj.DataCriacao)}'`;
+        obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
+        obj.DataFim = `'${setDataSQL(obj.DataFim)}'`;
+        if (! validarParametro(obj.Plantao)) obj.Plantao = 0;
 
-    const file = req.file
-    const imageName = generateUuidImage();
-    const ext = getExtension(file.mimetype);
+        const file = req.file
 
-    const imageWebp = await convertImageToWebp(file.buffer);
+        if (file != undefined) {
+            const imageName = generateUuidImage();
+            const ext = getExtension(file.mimetype);
 
-    if (file != undefined) {
-        const [resAtendimento, resImagem] = await Promise.all([qryInsert(obj), qryInsertImagem(imageName, ext, imageWebp, file)]);
-        res.status(201).send({resAtendimento, resImagem});
-    } else {
-        const resAtendimento = await qryInsert(obj);
-        res.status(201).send(resAtendimento);
-    }
+            const imageWebp = await convertImageToWebp(file.buffer);
+            
+            const [resAtendimento, resImagem] = await Promise.all([qryInsert(obj), qryInsertImagem(imageName, ext, imageWebp, file)]);
+            res.status(201).send({resAtendimento, resImagem});
+        } else {
+            const resAtendimento = await qryInsert(obj);
+            res.status(201).send({resAtendimento});
+        }
+    } catch (error) {
+        res.status(404).send('Imagem ou JSON inválidos ' +  error);
+    } 
 }
 
 function Atualizar(req, res) {
