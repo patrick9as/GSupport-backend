@@ -13,6 +13,7 @@ async function qryAtendimentos(obj) {
 
     console.log('\nscript da consulta:\n' + script)
     retorno = await sql.query(script);
+
     return retorno.recordset;
 }
 
@@ -26,6 +27,7 @@ async function qryTotal(obj) {
 
     console.log('\nscript do total:\n' + script)
     retorno = await sql.query(script);
+
     return retorno.recordset[0].Total;
 } 
 
@@ -39,6 +41,7 @@ async function qryInsert(obj) {
     
     console.log('\nscript do insert:\n' + script);
     retorno = await sql.query(script);
+
     return retorno.recordset[0].Codigo;
 }
 
@@ -78,7 +81,8 @@ async function qryUpdate (obj) {
 
     console.log('\nscript do update:\n' + script);
     retorno = await sql.query(script);
-    return retorno.rowsAffected;
+
+    return retorno;
 }
 
 module.exports = {

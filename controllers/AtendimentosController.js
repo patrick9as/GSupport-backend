@@ -74,7 +74,7 @@ async function Inserir(req, res) {
         obj.Solucao = setTextoSQL(obj.Solucao);
         obj.Assunto = setTextoSQL(obj.Assunto);
         obj.CodSistema = setTextoSQL(obj.CodSistema);
-        obj.CodMeioComunicacao = setTextoSQL(CodMeioComunicacao);
+        obj.CodMeioComunicacao = setTextoSQL(obj.CodMeioComunicacao);
         obj.DataCriacao = `'${setDataSQL(obj.DataCriacao)}'`; 
         obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
         obj.DataFim = `'${setDataSQL(obj.DataFim)}'`;
@@ -99,37 +99,42 @@ async function Inserir(req, res) {
     } 
 }
 
-function Atualizar(req, res) {
-    let obj = {
-        CodUsuario = null,
-        CodEmpresa = null,
-        NomeCliente = null,
-        Problema = null,
-        Solucao = null,
-        Assunto = null,
-        CodSistema = null,
-        CodMeioComunicacao = null,
-        DataCriacao = null,
-        DataInicio = null,
-        DataFim = null,
-        Plantao = null
-    } = req.body;
+async function Atualizar(req, res) {
+    try {
+        let obj = {
+            CodUsuario = null,
+            CodEmpresa = null,
+            NomeCliente = null,
+            Problema = null,
+            Solucao = null,
+            Assunto = null,
+            CodSistema = null,
+            CodMeioComunicacao = null,
+            DataCriacao = null,
+            DataInicio = null,
+            DataFim = null,
+            Plantao = null
+        } = req.body;
 
-    obj.Codigo = setTextoSQL(obj.Codigo);
-    obj.CodUsuario = setTextoSQL(obj.CodUsuario);
-    obj.CodEmpresa = setTextoSQL(obj.CodEmpresa);
-    obj.NomeCliente = setTextoSQL(obj.NomeCliente);
-    obj.Problema = setTextoSQL(obj.Problema);
-    obj.Solucao = setTextoSQL(obj.Solucao);
-    obj.Assunto = setTextoSQL(obj.Assunto);
-    obj.CodSistema = setTextoSQL(obj.CodSistema);
-    obj.CodMeioComunicacao = setTextoSQL(CodMeioComunicacao);
-    obj.DataCriacao = `'${setDataSQL(obj.DataCriacao)}'`; 
-    obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
-    obj.DataFim = `'${setDataSQL(obj.DataFim)}'`;
-    if (! validarParametro(obj.Plantao)) obj.Plantao = 0;
+        obj.Codigo = setTextoSQL(obj.Codigo);
+        obj.CodUsuario = setTextoSQL(obj.CodUsuario);
+        obj.CodEmpresa = setTextoSQL(obj.CodEmpresa);
+        obj.NomeCliente = setTextoSQL(obj.NomeCliente);
+        obj.Problema = setTextoSQL(obj.Problema);
+        obj.Solucao = setTextoSQL(obj.Solucao);
+        obj.Assunto = setTextoSQL(obj.Assunto);
+        obj.CodSistema = setTextoSQL(obj.CodSistema);
+        obj.CodMeioComunicacao = setTextoSQL(obj.CodMeioComunicacao);
+        obj.DataCriacao = `'${setDataSQL(obj.DataCriacao)}'`; 
+        obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
+        obj.DataFim = `'${setDataSQL(obj.DataFim)}'`;
+        if (! validarParametro(obj.Plantao)) obj.Plantao = 0;
 
-    res.status(202).send({'Linhas afetadas': qryUpdate(obj)});
+        const retUpdate = await qryUpdate(obj);
+        res.status(202).send(`Linhas afetadas: ${retUpdate.rowsAffected.length}`);
+    } catch(error) {
+        res.status(404).send('Informações insuficientes ou incorretas ' +  error);
+    }
 }
 
 module.exports = { 
