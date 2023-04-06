@@ -34,39 +34,57 @@ async function qryInsert(obj) {
 
     script = 'INSERT INTO sup.atendimentos('
     script += '\n  CodUsuario, CodEmpresa, NomeCliente, Problema, Solucao, CodSistema, CodMeioComunicacao, DataCriacao, DataInicio, DataFim, Assunto, Plantao)';
+    script += '\nOUTPUT INSERTED.Codigo';
     script += `\n  VALUES (${obj.CodUsuario}, ${obj.CodEmpresa}, ${obj.NomeCliente}, ${obj.Problema}, ${obj.Solucao}, ${obj.CodSistema}, ${obj.CodMeioComunicacao}, ${obj.DataCriacao}, ${obj.DataInicio}, ${obj.DataFim}, ${obj.Assunto}, ${obj.Plantao})`;
     
     console.log('\nscript do insert:\n' + script);
     retorno = await sql.query(script);
-    return retorno.rowsAffected.length;
+    return retorno.recordset[0].Codigo;
 }
 
 async function qryInsertImagem(imageName, ext, imageWebp, file) {
-    try {
-        await uploadFile(imageWebp, imageName, file.mimetype, ext)
-        const fullName = `${imageName}.${ext}`
-        const imagemUrl = await getObjectSignedUrl(fullName)
+    await uploadFile(imageWebp, imageName, file.mimetype, ext)
+    const fullName = `${imageName}.${ext}`
+    const imagemUrl = await getObjectSignedUrl(fullName)
 
-        return {
-            imageName,
-            ext,
-            originalSize: file.size,
-            originalName: file.originalname,
-            imageWebp: imageWebp.byteLength,
-            newName: `${imageName}.${ext}`,
-            imagemUrl
-        }
-    } catch (error) {
-        return {
-            erro: `Erro ao fazer upload de imagem`,
-            motivo: error
-        }
+    return {
+        imageName,
+        ext,
+        originalSize: file.size,
+        originalName: file.originalname,
+        imageWebp: imageWebp.byteLength,
+        newName: `${imageName}.${ext}`,
+        imagemUrl
     }
+}
+
+async function qryUpdate (obj) {
+    let script, retorno;
+
+    script = 'UPDATE sup.atendimentos';
+    script += `\nSET CodUsuario = ${obj.CodUsuario},`;
+    script += `\nCodEmpresa = ${obj.CodEmpresa},`;
+    script += `\nNomeCliente = ${obj.NomeCliente},`;
+    script += `\nAssunto = ${obj.Assunto},`;
+    script += `\nProblema = ${obj.Problema},`;
+    script += `\nSolucao = ${obj.Solucao},`;
+    script += `\nCodSistema = ${obj.CodSistema},`;
+    script += `\nCodMeioComunicacao = ${obj.CodMeioComunicacao},`;
+    script += `\nDataCriacao = ${obj.DataCriacao},`;
+    script += `\nDataInicio = ${obj.DataInicio},`;
+    script += `\nDataFim = ${obj.DataFim},`;
+    script += `\nPlantao = ${obj.Plantao}`;
+    script += `\nWHERE Codigo = ${obj.Codigo}`;
+
+    console.log('\nscript do update:\n' + script);
+    retorno = await sql.query(script);
+    return retorno.rowsAffected;
 }
 
 module.exports = {
     qryAtendimentos,
     qryTotal,
     qryInsert,
-    qryInsertImagem
+    qryInsertImagem,
+    qryUpdate
 }

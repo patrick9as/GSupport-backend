@@ -48,8 +48,13 @@ function setDataSQL(data) {
         data = `${mes}/${dia}/${ano}`;
     }
     else {
-        const dataObj = new Date(Date.parse(data.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')));
-        data = `${dataObj.getFullYear()}-${('0' + (dataObj.getMonth() + 1)).slice(-2)}-${('0' + dataObj.getDate()).slice(-2)}`;
+        /*const dataObj = new Date(Date.parse(data.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')));
+        data = `${dataObj.getFullYear()}-${('0' + (dataObj.getMonth() + 1)).slice(-2)}-${('0' + dataObj.getDate()).slice(-2)}`;*/
+        console.log('\ndata antes de formatar:' + data);
+        const dataObj = new Date(Date.parse(data.replace(/(\d{2})\/(\d{2})\/(\d{4})\s(\d{2}):(\d{2}):(\d{2})/, '$2/$1/$3 $4:$5:$6')));
+        console.log('dataObj: ' + dataObj);
+        data = `${dataObj.getFullYear()}-${('0' + (dataObj.getMonth() + 1)).slice(-2)}-${('0' + dataObj.getDate()).slice(-2)} ${('0' + dataObj.getHours()).slice(-2)}:${('0' + dataObj.getMinutes()).slice(-2)}:${('0' + dataObj.getSeconds()).slice(-2)}`;
+        console.log('dataformatada: ' + data);
     }
 
     return data;
