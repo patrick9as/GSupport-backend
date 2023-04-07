@@ -2,15 +2,7 @@ const sql = require('../db.js');
 const { uploadFile, getObjectSignedUrl } = require('../aws/s3');
 
 async function qryAtendimentos(obj) {
-    let script, retorno;
-
-    // script = `SELECT * FROM sup.getAtendimentos(`
-    // script += `${obj.Codigo}, ${obj.PageNumber}, `;
-    // script += `${obj.Rows}, ${obj.Texto}, ${obj.Assunto}, `;
-    // script += `${obj.DataInicio}, ${obj.DataFim}, ${obj.Sistema}, `;
-    // script += `${obj.MeioComunicacao}, ${obj.Usuario}, `;
-    // script += `${obj.Plantao})`;
-    script = `DECLARE @Codigo VARCHAR(MAX) = ${obj.Codigo}, `;
+    let script = `DECLARE @Codigo VARCHAR(MAX) = ${obj.Codigo}, `;
     script += `\n@PageNumber INT = ${obj.PageNumber}, @Rows INT = ${obj.Rows},`;
     script += `\n@Texto VARCHAR(MAX) = ${obj.Texto}, @Assunto VARCHAR(MAX) = ${obj.Assunto},`;
     script += `\n@DataInicio VARCHAR(MAX) = ${obj.DataInicio}, @DataFim VARCHAR(MAX) = ${obj.DataFim},`;
@@ -19,14 +11,25 @@ async function qryAtendimentos(obj) {
     script += `\n@Usuario VARCHAR(MAX) = ${obj.Usuario},`;
     script += `\n@Plantao INT = ${obj.Plantao};`;
 
-    script += `\nSELECT`;
-    script += `\na.*`;
+    script += `\n\nSELECT`;
+    //Campos
+    script += `\n   a.Codigo, a.CodUsuario,`;
+    script += `\n   a.CodEmpresa, e.NomeFantasia, e.RazaoSocial, e.CNPJ,`;
+    script += `\n   a.NomeCliente, a.Assunto, a.Problema, a.Solucao,`;
+    script += `\n   a.CodSistema, s.Sistema,`;
+    script += `\n   a.CodMeioComunicacao, mc.MeioComunicacao,`;
+    script += `\n   a.DataCriacao, a.DataInicio, a.DataFim,`;
+    script += `\n   a.Plantao`
+
+    //Fontes
     script += `\nFROM sup.atendimentos a`;
     script += `\nINNER JOIN sup.empresas e ON a.CodEmpresa = e.Codigo`;
     script += `\nINNER JOIN sup.usuarios u ON a.CodUsuario = u.Codigo`;
     script += `\nINNER JOIN sup.sistemas s ON a.CodSistema = s.Codigo`;
     script += `\nINNER JOIN sup.meios_comunicacao mc ON a.CodMeioComunicacao = mc.Codigo`;
-    script += `\nWHERE (`;
+
+    //Filtros
+    script += `\n\nWHERE (`;
     script += `\n   a.Problema LIKE @Texto`;
     script += `\n   OR a.Solucao LIKE @Texto`;
     script += `\n   OR e.NomeFantasia LIKE @Texto`;
@@ -46,7 +49,8 @@ async function qryAtendimentos(obj) {
     script += `\n    WHEN @Plantao = -1 THEN @Plantao`;
     script += `\n    END`;
         
-    script += `\nORDER BY a.Codigo DESC`;
+    //Paginação
+    script += `\n\nORDER BY a.Codigo DESC`;
     script += `\nOFFSET (@PageNumber -1) * @Rows`;
     script += `\nROWS FETCH NEXT @Rows`;
     script += `\nROWS ONLY`;
@@ -54,7 +58,7 @@ async function qryAtendimentos(obj) {
     console.log('\n-----script da consulta:-----\n' + script)
     const startTime = new Date().getTime();
     
-    retorno = await sql.query(script);
+    const retorno = await sql.query(script);
 
     const endTime = new Date().getTime();
     const executionTime = endTime - startTime;
@@ -65,17 +69,6 @@ async function qryAtendimentos(obj) {
 
 async function qryTotal(obj) {
     let script, retorno;
-
-    /*script = `SELECT COUNT(*) 'Total' FROM sup.getAtendimentos(`;
-    script += `${obj.Codigo}, 1, (SELECT COUNT(Codigo) FROM sup.atendimentos), `;
-    script += `${obj.Texto}, ${obj.Assunto}, ${obj.DataInicio}, ${obj.DataFim}, `;
-    script += `${obj.Sistema}, ${obj.MeioComunicacao}, ${obj.Usuario}, ${obj.Plantao})`;
-
-    console.log('\nscript do total:\n' + script)*/
-
-    //retorno = await sql.query(script);
-
-    //return retorno.recordset[0].Total;
 
     script = `DECLARE @Codigo VARCHAR(MAX) = ${obj.Codigo}, `;
     script += `\n@Texto VARCHAR(MAX) = ${obj.Texto}, @Assunto VARCHAR(MAX) = ${obj.Assunto},`;
