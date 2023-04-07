@@ -4,7 +4,8 @@ const {
     getExtension,
     validarParametro,
     setTextoSQL,
-    setDataSQL
+    setDataSQL,
+    FormatDate
     } = require('../helper');
 const { 
     qryAtendimentos,
@@ -29,7 +30,7 @@ async function Consultar(req, res) {
             MeioComunicacao = null,
             Usuario = null,
             Plantao = null
-        } = req.body;
+        } = req.query;
 
         obj.Codigo = setTextoSQL(obj.Codigo);
         obj.Texto = setTextoSQL(obj.Texto);
