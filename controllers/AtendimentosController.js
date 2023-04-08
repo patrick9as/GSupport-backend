@@ -29,14 +29,29 @@ async function Consultar(req, res) {
             Sistema = null,
             MeioComunicacao = null,
             Usuario = null,
-            Plantao = null
+            Plantao = null,
+            FiltroData = null
         } = req.query;
 
         obj.Codigo = setTextoSQL(obj.Codigo);
         obj.Texto = setTextoSQL(obj.Texto);
         obj.Assunto = setTextoSQL(obj.Assunto);
-        obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
-        obj.DataFim = `'${setDataSQL(obj.DataFim)} 23:59:59'`;
+
+        if (obj.DataInicio == undefined || obj.DataInicio == null) {
+            obj.DataInicio = null;
+        } else 
+            obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
+
+        if (obj.DataFim == undefined || obj.DataFim == null) {
+            obj.DataFim = null;
+        } else 
+            obj.DataFim = `'${setDataSQL(obj.DataFim)} 23:59:59'`;
+
+        if (obj.DataInicio == null || obj.DataFim == null)
+            obj.FiltroData = 0;
+        else
+            obj.FiltroData = 1;
+
         obj.Sistema = setTextoSQL(obj.Sistema);
         obj.MeioComunicacao = setTextoSQL(obj.MeioComunicacao);
         obj.Usuario = setTextoSQL(obj.Usuario);

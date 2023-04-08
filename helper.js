@@ -43,13 +43,14 @@ function setTextoSQL(texto) {
 }
 
 function setDataSQL(data) {
-    if (data == null || data == undefined) {
+    /*if (data == null || data == undefined) {
         const dataAtual = new Date();
         const ano = dataAtual.getFullYear();
         const mes = ('0' + (dataAtual.getMonth() + 1)).slice(-2);
         const dia = ('0' + dataAtual.getDate()).slice(-2);
         data = `${ano}-${mes}-${dia}`;
-    } else if (/\d{8}/.test(data)) {
+    else*/
+    if (/\d{8}/.test(data)) {
         // Se a data tem exatamente 8 dígitos, assume que está no formato yyyymmdd e adiciona hífen para formatar como yyyy-mm-dd
         data = `${data.slice(0, 4)}-${data.slice(4, 6)}-${data.slice(6, 8)}`;
         /*const dataObj = new Date(Date.parse(data.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')));
