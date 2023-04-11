@@ -29,14 +29,15 @@ async function Consultar(req, res) {
             MeioComunicacao = null,
             Usuario = null,
             Plantao = null,
-            FiltroData = null
+            FiltroData = null,
+            FiltroPaginacao = null
         } = req.query;
 
         obj.Codigo = setTextoSQL(obj.Codigo);
         obj.Texto = setTextoSQL(obj.Texto);
         obj.Assunto = setTextoSQL(obj.Assunto);
 
-        if (obj.DataInicio == undefined || obj.DataInicio == null) {
+        /*if (obj.DataInicio == undefined || obj.DataInicio == null) {
             obj.DataInicio = null;
         } else 
             obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
@@ -49,14 +50,23 @@ async function Consultar(req, res) {
         if (obj.DataInicio == null || obj.DataFim == null)
             obj.FiltroData = 0;
         else
-            obj.FiltroData = 1;
+            obj.FiltroData = 1;*/
+        
+        obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`; 
+        if (obj.DataInicio == null || obj.Datainicio == undefined)
+            obj.DataFim = `'${setDataSQL(obj.DataFim)} 23:59:59'`;
+        else
+            obj.DataFim = `'${setDataSQL(obj.DataFim)}'`;
 
         obj.Sistema = setTextoSQL(obj.Sistema);
         obj.MeioComunicacao = setTextoSQL(obj.MeioComunicacao);
         obj.Usuario = setTextoSQL(obj.Usuario);
         if (! validarParametro(obj.PageNumber)) obj.PageNumber = 1;
         if (! validarParametro(obj.Plantao)) obj.Plantao = -1;
-        if (! validarParametro(obj.Rows) || obj.Rows <= 0) obj.Rows = 5;
+        if (! validarParametro(obj.Rows) || obj.Rows <= 0) {
+            obj.FiltroPaginacao = 0;
+            obj.Rows = 5;
+        } else obj.FiltroPaginacao = 1;
 
         const [resTotal, resAtendimento] = await Promise.all([qryTotal(obj), qryAtendimentos(obj)])
         res.status(200).send(JSON.stringify({ 'Total': resTotal, 'Result': resAtendimento} ));

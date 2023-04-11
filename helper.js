@@ -56,11 +56,20 @@ function setDataSQL(data) {
         /*const dataObj = new Date(Date.parse(data.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')));
         data = `${dataObj.getFullYear()}-${('0' + (dataObj.getMonth() + 1)).slice(-2)}-${('0' + dataObj.getDate()).slice(-2)}`;*/
     } else {    
+        if (data == null || data == undefined) {
+            const dataAtual = new Date();
+            const ano = dataAtual.getFullYear();
+            const mes = ('0' + (dataAtual.getMonth() + 1)).slice(-2);
+            const dia = ('0' + dataAtual.getDate()).slice(-2);
+            data = `${ano}-${mes}-${dia}`;
+        }else {
+
         console.log('\ndata antes de formatar:' + data);
         const dataObj = new Date(Date.parse(data.replace(/(\d{2})\/(\d{2})\/(\d{4})\s(\d{2}):(\d{2}):(\d{2})/, '$2/$1/$3 $4:$5:$6')));
         console.log('dataObj: ' + dataObj);
         data = `${dataObj.getFullYear()}-${('0' + (dataObj.getMonth() + 1)).slice(-2)}-${('0' + dataObj.getDate()).slice(-2)} ${('0' + dataObj.getHours()).slice(-2)}:${('0' + dataObj.getMinutes()).slice(-2)}:${('0' + dataObj.getSeconds()).slice(-2)}`;
         console.log('dataformatada: ' + data);
+        }
     }
 
     //A data sempre será retornada no formato yyyy-mm-dd

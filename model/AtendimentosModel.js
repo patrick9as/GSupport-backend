@@ -37,7 +37,7 @@ async function qryAtendimentos(obj) {
     script += `\n   OR a.NomeCliente LIKE @Texto`;
     script += `\n   OR a.Codigo LIKE @Texto`;
     script += `\n)`;
-    if (obj.FiltroData == 1)
+    // if (obj.FiltroData == 1)
         script += `\nAND a.DataInicio BETWEEN @DataInicio AND @DataFim`;
     script += `\nAND u.Usuario LIKE @Usuario`;
     script += `\nAND s.Sistema LIKE @Sistema`;
@@ -52,9 +52,11 @@ async function qryAtendimentos(obj) {
         
     //Paginação
     script += `\n\nORDER BY a.Codigo DESC`;
-    script += `\nOFFSET (@PageNumber -1) * @Rows`;
-    script += `\nROWS FETCH NEXT @Rows`;
-    script += `\nROWS ONLY`;
+    if (obj.FiltroPaginacao == 1) {
+        script += `\nOFFSET (@PageNumber -1) * @Rows`;
+        script += `\nROWS FETCH NEXT @Rows`;
+        script += `\nROWS ONLY`;
+    }
 
     console.log('\n-----script da consulta:-----\n' + script)
     const startTime = new Date().getTime();
@@ -94,7 +96,7 @@ async function qryTotal(obj) {
     script += `\n   OR a.NomeCliente LIKE @Texto`;
     script += `\n   OR a.Codigo LIKE @Texto`;
     script += `\n)`;
-    if (obj.FiltroData == 1)
+    //if (obj.FiltroData == 1)
         script += `\nAND a.DataInicio BETWEEN @DataInicio AND @DataFim`;
     script += `\nAND u.Usuario LIKE @Usuario`;
     script += `\nAND s.Sistema LIKE @Sistema`;
