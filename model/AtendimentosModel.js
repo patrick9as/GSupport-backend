@@ -37,8 +37,7 @@ async function qryAtendimentos(obj) {
     script += `\n   OR a.NomeCliente LIKE @Texto`;
     script += `\n   OR a.Codigo LIKE @Texto`;
     script += `\n)`;
-    // if (obj.FiltroData == 1)
-        script += `\nAND a.DataInicio BETWEEN @DataInicio AND @DataFim`;
+    script += `\nAND a.DataInicio BETWEEN @DataInicio AND @DataFim`;
     script += `\nAND u.Usuario LIKE @Usuario`;
     script += `\nAND s.Sistema LIKE @Sistema`;
     script += `\nAND mc.MeioComunicacao LIKE @MeioComunicacao`;
@@ -96,8 +95,7 @@ async function qryTotal(obj) {
     script += `\n   OR a.NomeCliente LIKE @Texto`;
     script += `\n   OR a.Codigo LIKE @Texto`;
     script += `\n)`;
-    //if (obj.FiltroData == 1)
-        script += `\nAND a.DataInicio BETWEEN @DataInicio AND @DataFim`;
+    script += `\nAND a.DataInicio BETWEEN @DataInicio AND @DataFim`;
     script += `\nAND u.Usuario LIKE @Usuario`;
     script += `\nAND s.Sistema LIKE @Sistema`;
     script += `\nAND mc.MeioComunicacao LIKE @MeioComunicacao`;
