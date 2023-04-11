@@ -4,8 +4,7 @@ const {
     getExtension,
     validarParametro,
     setTextoSQL,
-    setDataSQL,
-    FormatDate
+    setDataSQL
     } = require('../helper');
 const { 
     qryAtendimentos,
