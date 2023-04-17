@@ -34,7 +34,7 @@ async function convertImageToWebp(file){
     return result
 }
 
-function setTextoSQL(texto) {
+function setTextoQuotedSQL(texto) {
     if (texto == null || texto == undefined)
         texto = `'%%'`;
     else
@@ -72,7 +72,7 @@ function setDataSQL(data) {
         }
     }
 
-    //A data sempre será retornada no formato yyyy-mm-dd
+    //A data sempre será retornada no formato yyyy-mm-dd hh:mm:ss
     return data;
 }
 
@@ -89,7 +89,7 @@ module.exports = {
     generateUuidImage,
     getExtension,
     convertImageToWebp,
-    setTextoSQL,
+    setTextoQuotedSQL,
     setDataSQL,
     validarParametro
 };

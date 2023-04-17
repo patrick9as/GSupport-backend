@@ -3,7 +3,7 @@ const {
     generateUuidImage, 
     getExtension,
     validarParametro,
-    setTextoSQL,
+    setTextoQuotedSQL,
     setDataSQL
     } = require('../helper');
 const { 
@@ -32,9 +32,9 @@ async function Consultar(req, res) {
             FiltroPaginacao = null
         } = req.query;
 
-        obj.Codigo = setTextoSQL(obj.Codigo);
-        obj.Texto = setTextoSQL(obj.Texto);
-        obj.Assunto = setTextoSQL(obj.Assunto);
+        obj.Codigo = setTextoQuotedSQL(obj.Codigo);
+        obj.Texto = setTextoQuotedSQL(obj.Texto);
+        obj.Assunto = setTextoQuotedSQL(obj.Assunto);
         
         obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`; 
         if (obj.DataInicio == null || obj.Datainicio == undefined)
@@ -42,9 +42,9 @@ async function Consultar(req, res) {
         else
             obj.DataFim = `'${setDataSQL(obj.DataFim)}'`;
 
-        obj.Sistema = setTextoSQL(obj.Sistema);
-        obj.MeioComunicacao = setTextoSQL(obj.MeioComunicacao);
-        obj.Usuario = setTextoSQL(obj.Usuario);
+        obj.Sistema = setTextoQuotedSQL(obj.Sistema);
+        obj.MeioComunicacao = setTextoQuotedSQL(obj.MeioComunicacao);
+        obj.Usuario = setTextoQuotedSQL(obj.Usuario);
         if (! validarParametro(obj.PageNumber)) obj.PageNumber = 1;
         if (! validarParametro(obj.Plantao)) obj.Plantao = -1;
         if (! validarParametro(obj.Rows) || obj.Rows <= 0) {
@@ -60,8 +60,8 @@ async function Consultar(req, res) {
 }
 
 async function Inserir(req, res) {
-    console.log(`*** Entrou na rota Inserir`);
-    console.log(`*** Dados vindo do front: ${req.body.data}`);
+    //console.log(`*** Entrou na rota Inserir`);
+    //console.log(`*** Dados vindo do front: ${req.body.data}`);
     try {
         let obj = {
             CodUsuario = null,
@@ -77,23 +77,34 @@ async function Inserir(req, res) {
             DataFim = null,
             Plantao = null
         } = JSON.parse (req.body.data);
-        console.log(`*** Dados na variavel obj: ${obj}`);
+        //console.log(`*** Dados na variavel obj: ${obj}`);
 
-        console.log(`*** Entrou na validacao dos dados`);
-        obj.CodUsuario = `'${obj.CodUsuario}'`;
-        obj.CodEmpresa = `'${obj.CodEmpresa}'`;
-        obj.NomeCliente = `'${obj.NomeCliente}'`;
-        obj.Problema = `'${obj.Problema}'`;
-        obj.Solucao = `'${obj.Solucao}'`;
-        obj.Assunto = `'${obj.Assunto}'`;
-        obj.CodSistema = `'${obj.CodSistema}'`;
-        obj.CodMeioComunicacao = `'${obj.CodMeioComunicacao}'`;
-        obj.DataCriacao = `'${setDataSQL(obj.DataCriacao)}'`; 
-        obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
-        obj.DataFim = `'${setDataSQL(obj.DataFim)}'`;
+        // console.log(`*** Entrou na validacao dos dados`);
+        if (! validarParametro(obj.CodUsuario)) throw new Error ('Código do usuário é inválido');
+        else obj.CodUsuario = `'${obj.CodUsuario}'`;
+        if (! validarParametro(obj.CodEmpresa)) throw new Error ('Código da empresa é inválido');
+        else obj.CodEmpresa = `'${obj.CodEmpresa}'`;
+        if (! validarParametro(obj.NomeCliente)) throw new Error ('Nome do cliente é inválido'); 
+        else obj.NomeCliente = `'${obj.NomeCliente}'`;
+        if (! validarParametro(obj.Problema)) throw new Error ('Problema é inválido');
+        else obj.Problema = `'${obj.Problema}'`;
+        if (! validarParametro(obj.Solucao)) throw new Error ('Solução é inválida');
+        else obj.Solucao = `'${obj.Solucao}'`;
+        if (! validarParametro(obj.Assunto)) throw new Error ('Assunto é inválido');
+        else obj.Assunto = `'${obj.Assunto}'`;
+        if (! validarParametro(obj.CodSistema)) throw new Error ('Código do sistema é inválido');
+        else obj.CodSistema = `'${obj.CodSistema}'`;
+        if (! validarParametro(obj.CodMeioComunicacao)) throw new Error ('Código do meio de comunicação é inválido');
+        else obj.CodMeioComunicacao = `'${obj.CodMeioComunicacao}'`;
+        if (! validarParametro(obj.DataCriacao)) throw new Error ('Data de criação é inválida');
+        else obj.DataCriacao = `'${setDataSQL(obj.DataCriacao)}'`; 
+        if (! validarParametro(obj.DataInicio)) throw new Error ('Data de início é inválida');
+        else obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
+        if (! validarParametro(obj.DataFim)) throw new Error ('Data de fim é inválida');
+        else obj.DataFim = `'${setDataSQL(obj.DataFim)}'`;
         if (! validarParametro(obj.Plantao)) obj.Plantao = 0;
 
-        console.log(`*** Validou os dados do req: ${obj}`);
+        //console.log(`*** Validou os dados do req: ${obj}`);
         
         const file = req.file
 
@@ -136,15 +147,15 @@ async function Atualizar(req, res) {
             Plantao = null
         } = req.body;
 
-        obj.Codigo = setTextoSQL(obj.Codigo);
-        obj.CodUsuario = setTextoSQL(obj.CodUsuario);
-        obj.CodEmpresa = setTextoSQL(obj.CodEmpresa);
-        obj.NomeCliente = setTextoSQL(obj.NomeCliente);
-        obj.Problema = setTextoSQL(obj.Problema);
-        obj.Solucao = setTextoSQL(obj.Solucao);
-        obj.Assunto = setTextoSQL(obj.Assunto);
-        obj.CodSistema = setTextoSQL(obj.CodSistema);
-        obj.CodMeioComunicacao = setTextoSQL(obj.CodMeioComunicacao);
+        obj.Codigo = setTextoQuotedSQL(obj.Codigo);
+        obj.CodUsuario = setTextoQuotedSQL(obj.CodUsuario);
+        obj.CodEmpresa = setTextoQuotedSQL(obj.CodEmpresa);
+        obj.NomeCliente = setTextoQuotedSQL(obj.NomeCliente);
+        obj.Problema = setTextoQuotedSQL(obj.Problema);
+        obj.Solucao = setTextoQuotedSQL(obj.Solucao);
+        obj.Assunto = setTextoQuotedSQL(obj.Assunto);
+        obj.CodSistema = setTextoQuotedSQL(obj.CodSistema);
+        obj.CodMeioComunicacao = setTextoQuotedSQL(obj.CodMeioComunicacao);
         obj.DataCriacao = `'${setDataSQL(obj.DataCriacao)}'`; 
         obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
         obj.DataFim = `'${setDataSQL(obj.DataFim)}'`;
