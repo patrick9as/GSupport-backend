@@ -80,14 +80,14 @@ async function Inserir(req, res) {
         console.log(`*** Dados na variavel obj: ${obj}`);
 
         console.log(`*** Entrou na validacao dos dados`);
-        obj.CodUsuario = setTextoSQL(obj.CodUsuario);
-        obj.CodEmpresa = setTextoSQL(obj.CodEmpresa);
-        obj.NomeCliente = setTextoSQL(obj.NomeCliente);
-        obj.Problema = setTextoSQL(obj.Problema);
-        obj.Solucao = setTextoSQL(obj.Solucao);
-        obj.Assunto = setTextoSQL(obj.Assunto);
-        obj.CodSistema = setTextoSQL(obj.CodSistema);
-        obj.CodMeioComunicacao = setTextoSQL(obj.CodMeioComunicacao);
+        obj.CodUsuario = `'${obj.CodUsuario}'`;
+        obj.CodEmpresa = `'${obj.CodEmpresa}'`;
+        obj.NomeCliente = `'${obj.NomeCliente}'`;
+        obj.Problema = `'${obj.Problema}'`;
+        obj.Solucao = `'${obj.Solucao}'`;
+        obj.Assunto = `'${obj.Assunto}'`;
+        obj.CodSistema = `'${obj.CodSistema}'`;
+        obj.CodMeioComunicacao = `'${obj.CodMeioComunicacao}'`;
         obj.DataCriacao = `'${setDataSQL(obj.DataCriacao)}'`; 
         obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
         obj.DataFim = `'${setDataSQL(obj.DataFim)}'`;
@@ -98,22 +98,22 @@ async function Inserir(req, res) {
         const file = req.file
 
         // res temporario
-        res.status(200).end()
+        //res.status(200).end()
 
         //comentei para testar sem salvar no banco.
 
-        // if (file != undefined) {
-        //     const imageName = generateUuidImage();
-        //     const ext = getExtension(file.mimetype);
+         if (file != undefined) {
+            const imageName = generateUuidImage();
+            const ext = getExtension(file.mimetype);
 
-        //     const imageWebp = await convertImageToWebp(file.buffer);
+            const imageWebp = await convertImageToWebp(file.buffer);
             
-        //     const [resAtendimento, resImagem] = await Promise.all([qryInsert(obj), qryInsertImagem(imageName, ext, imageWebp, file)]);
-        //     res.status(201).send({Codigo: resAtendimento, resImagem});
-        // } else {
-        //     const resAtendimento = await qryInsert(obj);
-        //     res.status(201).send({Codigo: resAtendimento});
-        // }
+            const [resAtendimento, resImagem] = await Promise.all([qryInsert(obj), qryInsertImagem(imageName, ext, imageWebp, file)]);
+            res.status(201).send({Codigo: resAtendimento, resImagem});
+        } else {
+            const resAtendimento = await qryInsert(obj);
+            res.status(201).send({Codigo: resAtendimento});
+        }
     } catch (error) {
         res.status(404).send('Imagem ou JSON inválidos ' +  error);
     } 
