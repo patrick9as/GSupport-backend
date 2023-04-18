@@ -27,11 +27,20 @@ async function uploadImage(req, res) {
 
         console.log(`novo nome: ${newImageName}`);
 
-        console.log(files[index]);
+        // console.log(files[index]);
         
     }
-res.send(req.file)
+    const imgs = ['5135f07a-0db4-4131-95f9-856623912927.jpeg', '115e2c54-d019-4e46-b0df-32d28ad2f787.png']
+    let imgArr = []
 
+    for (let index = 0; index < imgs.length; index++) {
+        console.log(imgs[index]);
+        const result = await getObjectSignedUrl(imgs[index])
+        imgArr.push(result)
+        
+    }
+
+res.send({images: imgArr})
 
 }
 
