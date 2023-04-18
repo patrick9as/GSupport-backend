@@ -4,7 +4,7 @@ const {
     getExtension,
 } = require('../helper');
 
-const { uploadFile, getObjectSignedUrl } = require('../aws/s3');
+const { uploadFile, getObjectSignedUrl, deleteFile } = require('../aws/s3');
 
 async function uploadImage(req, res) {
     console.log('entrou na rota de upload');
@@ -30,9 +30,9 @@ async function uploadImage(req, res) {
         // console.log(files[index]);
         
     }
-    const imgs = ['5135f07a-0db4-4131-95f9-856623912927.jpeg', '115e2c54-d019-4e46-b0df-32d28ad2f787.png']
+    const imgs = ['5135f07a-0db4-4131-95f9-856623912927.jpeg', '115e2c54-d019-4e46-b0df-32d28ad2f787.png', '3960ef1f-dd1c-43d7-9f53-a37d35bc2bbb.jpeg']
     let imgArr = []
-
+    
     for (let index = 0; index < imgs.length; index++) {
         console.log(imgs[index]);
         const result = await getObjectSignedUrl(imgs[index])
@@ -40,7 +40,12 @@ async function uploadImage(req, res) {
         
     }
 
-res.send({images: imgArr})
+    const deleteImg = await  deleteFile('3960ef1f-dd1c-43d7-9f53-a37d35bc2bbb.jpeg')
+
+
+
+res.send({images: imgArr, delete: deleteImg})
+
 
 }
 

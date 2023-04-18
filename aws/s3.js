@@ -1,4 +1,4 @@
-const {S3Client, PutObjectCommand, GetObjectCommand} =  require('@aws-sdk/client-s3')
+const {S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand} =  require('@aws-sdk/client-s3')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
 const bucketName = process.env.AWS_BUCKET_NAME
@@ -35,4 +35,13 @@ async function getObjectSignedUrl(key){
 
     return url
 }
-module.exports = {uploadFile, getObjectSignedUrl}
+
+async function deleteFile(key){
+    const params = {
+        Bucket: bucketName,
+        Key: key
+    }
+    const command = new DeleteObjectCommand(params)
+    return await client.send(command)
+}
+module.exports = {uploadFile, getObjectSignedUrl, deleteFile}
