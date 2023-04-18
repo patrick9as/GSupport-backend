@@ -122,33 +122,29 @@ async function qryTotal(obj) {
 async function qryInsert(obj) {
     let script, retorno;
 
-    script = 'INSERT INTO sup.atendimentos('
+    script = 'INSERT INTO sup.atendimentos(';
     script += '\n  CodUsuario, CodEmpresa, NomeCliente, Problema, Solucao, CodSistema, CodMeioComunicacao, DataCriacao, DataInicio, DataFim, Assunto, Plantao)';
     script += '\nOUTPUT INSERTED.Codigo';
     script += `\n  VALUES (${obj.CodUsuario}, ${obj.CodEmpresa}, ${obj.NomeCliente}, ${obj.Problema}, ${obj.Solucao}, ${obj.CodSistema}, ${obj.CodMeioComunicacao}, ${obj.DataCriacao}, ${obj.DataInicio}, ${obj.DataFim}, ${obj.Assunto}, ${obj.Plantao})`;
     
-    console.log('\nscript do insert:\n' + script);
+    console.log('\nscript do insert do atendimento:\n' + script);
     retorno = await sql.query(script);
 
     return retorno.recordset[0].Codigo;
 }
 
-async function qryInsertImagem(imageName, ext, imageWebp, file) {
-    await uploadFile(imageWebp, imageName, file.mimetype, ext)
-    const fullName = `${imageName}.${ext}`
-    const imagemUrl = await getObjectSignedUrl(fullName)
+async function qryInsertImagem(Imagem, CodAtendimento) {
+    let script, retorno;
 
-    return {
-        imageName,
-        ext,
-        originalSize: file.size,
-        originalName: file.originalname,
-        imageWebp: imageWebp.byteLength,
-        newName: `${imageName}.${ext}`,
-        imagemUrl
-    }
+    script = `INSERT INTO sup.imagens(Imagem, CodAtendimento)`;
+    script += `\n   OUTPUT INSERTED.Codigo`;
+    script += `\n   VALUES ('${Imagem}',${CodAtendimento})`;
+
+    console.log('\nscript do insert da imagem:\n' + script);
+    retorno = await sql.query(script);
+
+    return retorno.recordset[0].Codigo;
 }
-
 async function qryUpdate (obj) {
     let script, retorno;
 
