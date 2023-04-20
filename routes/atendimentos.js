@@ -3,6 +3,7 @@ const routes = Router();
 const atendimentosController = require('../controllers/AtendimentosController');
 const usuarioController  = require('../controllers/UsuariosController');
 const loginController = require('../controllers/LoginController');
+const empresasController = require('../controllers/EmpresasController');
 const uploadImage = require('../controllers/uploadImage');
 
 // multer config
@@ -23,5 +24,10 @@ routes.get('/usuarios', usuarioController.Consultar);
 
 // Login
 routes.post('/login', loginController.Login);
+
+// Empresas
+// routes.get('/empresas', empresasController.Consultar);
+// routes.post('/empresas', empresasController.Inserir);
+//routes.post('/empresas/update', empresasController.Atualizar);
 
 module.exports = routes;
