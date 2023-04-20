@@ -52,16 +52,16 @@ async function Consultar(req, res) {
         } else obj.FiltroPaginacao = 1;
 
         const [resTotal, resAtendimento] = await Promise.all([qryTotal(obj), qryAtendimentos(obj)])
-        console.log(`'***' ResAtendimento: ${resAtendimento[0].Codigo}`);
 
-        const resultImage = await querySelectImage(resAtendimento[0].Codigo)
-        console.log(`resultado funcao querySelect: ${resultImage[0].Imagem}`);
+        console.log(`*** Vai entrar no loop de imagem para coletar URL`);
+        for (let index = 0; index < resAtendimento.length; index++) {
+            let resultImage = await querySelectImage(resAtendimento[index].Codigo)
+            let resultImageS3 = await getImagesS3(resultImage)
+            resAtendimento[index].Imagens = resultImageS3
+         }
+         
 
-        console.log(`Vai entrar na funcao GetImagesS3`);
-        const resultImageS3 = await getImagesS3(resultImage)
-        console.log(`Saiu da funcao`);
-
-        res.status(200).send(JSON.stringify({ 'Total': resTotal, 'Result': { ...resAtendimento[0], Imagens: resultImageS3} }));
+        res.status(200).send(JSON.stringify({ 'Total': resTotal, 'Result': resAtendimento}));
     } catch (error) {
         res.status(404).send('Parâmetros de consulta inválidos ' + error);
     }
@@ -119,7 +119,7 @@ async function Inserir(req, res) {
             console.log(`*** Retorno da funcao Upload Image, valor:${imagesResult}`);
 
             //Laço para inserir mais de uma imagem
-            for (let i = 0; i <= 2; i++)
+            for (let i = 0; i < imagesResult.length; i++)
             imagesResult[i] = { Codigo: await qryInsertImagem(imagesResult[i], obj.Codigo), [`Imagem${i}`]: imagesResult[i] };
 
             res.status(201).send({ Atendimento: obj.Codigo, Imagens: imagesResult });

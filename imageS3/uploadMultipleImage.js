@@ -13,7 +13,7 @@ async function uploadImages(filesImages) {
     // const files = req.files
     let imageArr = []
 
-    for (let index = 0; index < files.length; index++) {
+    for (let index = 0 ; index < files.length; index++) {
         let imageName = generateUuidImage();
         console.log(imageName);
         let ext = getExtension(files[index].mimetype)
@@ -52,6 +52,7 @@ async function getImagesS3(images) {
         imagesArr.push(resultGetImage)
     }
     
+    console.log(`*** Saiu da funcao GetImagesS3`);
     return imagesArr
 }
 module.exports = { uploadImages, getImagesS3 }

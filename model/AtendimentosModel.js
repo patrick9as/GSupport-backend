@@ -70,7 +70,7 @@ async function qryAtendimentos(obj) {
 }
 
 async function querySelectImage(codigo){
-
+    console.log(`***Entrou na funcao querySelectImage`);
 
     let script = `select Imagem from sup.imagens where CodAtendimento = ${codigo}`
 
@@ -81,8 +81,10 @@ async function querySelectImage(codigo){
     const executionTime = endTime - startTime;
     console.log(`script de select imagem executado em ${executionTime / 1000} segundos`);
 
-
+    console.log(`***Saiu da funcao querySelectImage`);
+    
     return result.recordset
+
 }
 
 async function qryTotal(obj) {
