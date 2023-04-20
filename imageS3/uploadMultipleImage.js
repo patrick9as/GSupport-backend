@@ -41,7 +41,7 @@ async function uploadImages(filesImages) {
 
 async function getImagesS3(images) {
 
-    console.log(`*** Entrou na funcao GetImagesS3`);
+    // console.log(`*** Entrou na funcao GetImagesS3`);
 
     let imagesArr = []
 
@@ -52,7 +52,7 @@ async function getImagesS3(images) {
         imagesArr.push(resultGetImage)
     }
     
-    console.log(`*** Saiu da funcao GetImagesS3`);
+    // console.log(`*** Saiu da funcao GetImagesS3`);
     return imagesArr
 }
 module.exports = { uploadImages, getImagesS3 }
