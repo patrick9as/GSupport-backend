@@ -3,7 +3,7 @@ const routes = Router();
 const atendimentosController = require('../controllers/AtendimentosController');
 const usuarioController  = require('../controllers/UsuariosController');
 const loginController = require('../controllers/LoginController');
-const uploadImage = require('../controllers/uploadImage');
+// const uploadImage = require('../controllers/uploadImage');
 
 // multer config
 const multer = require('multer')
