@@ -9,9 +9,10 @@ const multer = require('multer')
 
 const storage = multer.memoryStorage()
 const upload = multer({storage})
+const limitImage = 10
 
 routes.get('/atendimentos', atendimentosController.Consultar);
-routes.post('/atendimentos', upload.array('image', 10), atendimentosController.Inserir);
+routes.post('/atendimentos', upload.array('image', limitImage), atendimentosController.Inserir);
 routes.post('/atendimentos/update', atendimentosController.Atualizar);
 
 // Usuarios
