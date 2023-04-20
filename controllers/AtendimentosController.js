@@ -1,7 +1,4 @@
 const {
-    convertImageToWebp,
-    generateUuidImage,
-    getExtension,
     validarParametro,
     setTextoQuotedSQL,
     setDataSQL
@@ -11,10 +8,11 @@ const {
     qryTotal,
     qryInsert,
     qryInsertImagem,
-    qryUpdate
+    qryUpdate,
+    querySelectImage
 } = require('../model/AtendimentosModel');
 
-const { uploadFile, getObjectSignedUrl } = require('../aws/s3');
+const {uploadImages, getImagesS3} = require('../imageS3/uploadMultipleImage')
 
 async function Consultar(req, res) {
     try {
@@ -54,7 +52,16 @@ async function Consultar(req, res) {
         } else obj.FiltroPaginacao = 1;
 
         const [resTotal, resAtendimento] = await Promise.all([qryTotal(obj), qryAtendimentos(obj)])
-        res.status(200).send(JSON.stringify({ 'Total': resTotal, 'Result': resAtendimento }));
+        console.log(`'***' ResAtendimento: ${resAtendimento[0].Codigo}`);
+
+        const resultImage = await querySelectImage(resAtendimento[0].Codigo)
+        console.log(`resultado funcao querySelect: ${resultImage[0].Imagem}`);
+
+        console.log(`Vai entrar na funcao GetImagesS3`);
+        const resultImageS3 = await getImagesS3(resultImage)
+        console.log(`Saiu da funcao`);
+
+        res.status(200).send(JSON.stringify({ 'Total': resTotal, 'Result': { ...resAtendimento[0], Imagens: resultImageS3} }));
     } catch (error) {
         res.status(404).send('Parâmetros de consulta inválidos ' + error);
     }
@@ -77,7 +84,7 @@ async function Inserir(req, res) {
             Plantao = null
         } = JSON.parse(req.body.data);
 
-        obj.file = req.file;
+        obj.file = req.files;
 
         if (!validarParametro(obj.CodUsuario)) throw new Error('Código do usuário é inválido');
         else obj.CodUsuario = `'${obj.CodUsuario}'`;
@@ -105,19 +112,17 @@ async function Inserir(req, res) {
 
         obj.Codigo = await qryInsert(obj);
         if (obj.file != undefined && obj.file != null) {
-            const imageName = generateUuidImage();
-            const ext = getExtension(obj.file.mimetype);
-            const imageWebp = await convertImageToWebp(obj.file.buffer);
 
-            await uploadFile(imageWebp, imageName, obj.file.mimetype, ext);
-            const newImageName = `${imageName}.${ext}`;
+            console.log(`*** Rota atendimento: Leu images`);
+            const imagesResult = await uploadImages(obj.file)
+
+            console.log(`*** Retorno da funcao Upload Image, valor:${imagesResult}`);
 
             //Laço para inserir mais de uma imagem
-            let Imagens = [];
             for (let i = 0; i <= 2; i++)
-                Imagens[i] = { Codigo: await qryInsertImagem(newImageName, obj.Codigo), [`Imagem${i}`]: newImageName };
+            imagesResult[i] = { Codigo: await qryInsertImagem(imagesResult[i], obj.Codigo), [`Imagem${i}`]: imagesResult[i] };
 
-            res.status(201).send({ Atendimento: obj.Codigo, Imagens });
+            res.status(201).send({ Atendimento: obj.Codigo, Imagens: imagesResult });
         } else
             res.status(201).send({ Atendimento: obj.Codigo });
     } catch (error) {
