@@ -69,6 +69,24 @@ async function qryAtendimentos(obj) {
     return retorno.recordset;
 }
 
+async function querySelectImage(codigo){
+    console.log(`***Entrou na funcao querySelectImage`);
+
+    let script = `select Imagem from sup.imagens where CodAtendimento = ${codigo}`
+
+    const startTime = new Date().getTime();
+    result = await sql.query(script)
+
+    const endTime = new Date().getTime();
+    const executionTime = endTime - startTime;
+    console.log(`script de select imagem executado em ${executionTime / 1000} segundos`);
+
+    console.log(`***Saiu da funcao querySelectImage`);
+    
+    return result.recordset
+
+}
+
 async function qryTotal(obj) {
     let script, retorno;
 
@@ -174,5 +192,6 @@ module.exports = {
     qryTotal,
     qryInsert,
     qryInsertImagem,
-    qryUpdate
+    qryUpdate,
+    querySelectImage
 }

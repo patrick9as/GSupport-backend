@@ -30,7 +30,7 @@ async function getObjectSignedUrl(key){
         Key: key
     }
     const command = new GetObjectCommand(params)
-    const seconds = 60
+    const seconds = 120
     const url = await getSignedUrl(client, command, {expiresIn: seconds})
 
     return url
