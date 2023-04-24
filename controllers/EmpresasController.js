@@ -24,7 +24,8 @@ async function Consultar(req,res) {
             Cidade, 
             UF, 
             Ativo, 
-            CodCategoria
+            CodCategoria,
+            OrderBy
         } = req.query;
 
         obj.Codigo = setTextoQuotedSQL(obj.Codigo);
@@ -40,6 +41,8 @@ async function Consultar(req,res) {
         if (!validarParametro(obj.Ativo)) obj.Ativo = 1;
         else obj.Ativo = obj.Ativo; 
         obj.CodCategoria = setTextoQuotedSQL(obj.CodCategoria);
+        if (!validarParametro(obj.OrderBy)) obj.OrderBy = ``;
+        else obj.OrderBy = `ORDER BY ${obj.OrderBy}`;
 
         let resEmpresas = await qryEmpresas(obj);
 

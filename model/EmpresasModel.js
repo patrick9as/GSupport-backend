@@ -17,6 +17,9 @@ async function qryEmpresas(obj) {
     script += `\nAND Ativo = ${obj.Ativo}`;
     script += `\nAND CodCategoria LIKE ${obj.CodCategoria}`;
 
+    //ORDER BY
+    script += `\n${obj.OrderBy}`;
+
     console.log('\n-----script da consulta de empresas:-----\n' + script)
     const startTime = new Date().getTime();
 
