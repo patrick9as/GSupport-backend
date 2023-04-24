@@ -8,7 +8,7 @@ const {
     qryTotal,
     qryInsert,
     qryUpdate
-} = require('../model/AtendimentosModel');
+} = require('../model/EmpresasModel');
 
 async function Consultar(req,res) {
     try {
@@ -28,18 +28,27 @@ async function Consultar(req,res) {
         } = req.query;
 
         obj.Codigo = setTextoQuotedSQL(obj.Codigo);
-        obj.CodExterno, 
-        NomeFantasia, 
-        RazaoSocial, 
-        CNPJ, 
-        Endereco, 
-        Numero, 
-        Bairro, 
-        Cidade, 
-        UF, 
-        Ativo, 
-        CodCategoria
+        obj.CodExterno = setTextoQuotedSQL(obj.CodExterno); 
+        obj.NomeFantasia = setTextoQuotedSQL(obj.NomeFantasia); 
+        obj.RazaoSocial = setTextoQuotedSQL(obj.RazaoSocial); 
+        obj.CNPJ = setTextoQuotedSQL(obj.CNPJ);
+        obj.Endereco = setTextoQuotedSQL(obj.Endereco);
+        obj.Numero = setTextoQuotedSQL(obj.Numero);
+        obj.Bairro = setTextoQuotedSQL(obj.Bairro);
+        obj.Cidade = setTextoQuotedSQL(obj.Cidade); 
+        obj.UF = setTextoQuotedSQL(obj.UF);
+        if (!validarParametro(obj.Ativo)) obj.Ativo = 1;
+        else obj.Ativo = obj.Ativo; 
+        obj.CodCategoria = setTextoQuotedSQL(obj.CodCategoria);
+
+        let resEmpresas = await qryEmpresas(obj);
+
+        res.status(200).send(resEmpresas);
     } catch (error) {
         res.status(404).send('Parâmetros de consulta inválidos ' + error);
     }
+}
+
+module.exports = {
+    Consultar
 }

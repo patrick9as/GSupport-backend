@@ -23,7 +23,7 @@ routes.get('/usuarios', usuarioController.Consultar);
 routes.post('/login', loginController.Login);
 
 // Empresas
-// routes.get('/empresas', empresasController.Consultar);
+routes.get('/empresas', empresasController.Consultar);
 // routes.post('/empresas', empresasController.Inserir);
 //routes.post('/empresas/update', empresasController.Atualizar);
 
