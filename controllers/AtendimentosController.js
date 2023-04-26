@@ -53,7 +53,7 @@ async function Consultar(req, res) {
 
         const [resTotal, resAtendimento] = await Promise.all([qryTotal(obj), qryAtendimentos(obj)])
 
-        console.log(`*** Vai entrar no loop de imagem para coletar URL`);
+        // console.log(`*** Vai entrar no loop de imagem para coletar URL`);
         for (let index = 0; index < resAtendimento.length; index++) {
             let resultImage = await querySelectImage(resAtendimento[index].Codigo)
             let resultImageS3 = await getImagesS3(resultImage)
@@ -113,18 +113,20 @@ async function Inserir(req, res) {
         obj.Codigo = await qryInsert(obj);
         if (obj.file != undefined && obj.file != null) {
 
-            console.log(`*** Rota atendimento: Leu images`);
+            //console.log(`*** Rota atendimento: Leu images`);
             const imagesResult = await uploadImages(obj.file)
 
-            console.log(`*** Retorno da funcao Upload Image, valor:${imagesResult}`);
+            //console.log(`*** Retorno da funcao Upload Image, valor:${imagesResult}`);
 
             //Laço para inserir mais de uma imagem
             for (let i = 0; i < imagesResult.length; i++)
-            imagesResult[i] = { Codigo: await qryInsertImagem(imagesResult[i], obj.Codigo), [`Imagem${i}`]: imagesResult[i] };
+                await qryInsertImagem(imagesResult[i], obj.Codigo);
+                // imagesResult[i] = { Codigo: await qryInsertImagem(imagesResult[i], obj.Codigo), [`Imagem${i}`]: imagesResult[i] };
 
-            res.status(201).send({ Atendimento: obj.Codigo, Imagens: imagesResult });
-        } else
-            res.status(201).send({ Atendimento: obj.Codigo });
+            res.status(201).send({Status: 'OK'});
+            // res.status(201).send({ Atendimento: obj.Codigo, Imagens: imagesResult });
+        } //else
+            //res.status(201).send({ Atendimento: obj.Codigo });
     } catch (error) {
         res.status(404).send('Imagem ou JSON inválidos ' + error);
     }
