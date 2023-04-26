@@ -7,7 +7,7 @@ const {
 const { uploadFile, getObjectSignedUrl } = require('../aws/s3');
 
 async function uploadImages(filesImages) {
-    c//onsole.log('entrou na funcao Upload Images');
+    //onsole.log('entrou na funcao Upload Images');
     // console.log(req.files);
     const files = filesImages
     // const files = req.files
