@@ -147,18 +147,30 @@ async function Atualizar(req, res) {
             Plantao = null
         } = req.body;
 
-        obj.Codigo = setTextoQuotedSQL(obj.Codigo);
-        obj.CodUsuario = setTextoQuotedSQL(obj.CodUsuario);
-        obj.CodEmpresa = setTextoQuotedSQL(obj.CodEmpresa);
-        obj.NomeCliente = setTextoQuotedSQL(obj.NomeCliente);
-        obj.Problema = setTextoQuotedSQL(obj.Problema);
-        obj.Solucao = setTextoQuotedSQL(obj.Solucao);
-        obj.Assunto = setTextoQuotedSQL(obj.Assunto);
-        obj.CodSistema = setTextoQuotedSQL(obj.CodSistema);
-        obj.CodMeioComunicacao = setTextoQuotedSQL(obj.CodMeioComunicacao);
-        obj.DataCriacao = `'${setDataSQL(obj.DataCriacao)}'`;
-        obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
-        obj.DataFim = `'${setDataSQL(obj.DataFim)}'`;
+        if (!validarParametro(obj.Codigo)) throw new Error('Código é inválido');
+        else obj.Codigo = `'${obj.Codigo}'`;
+        if (!validarParametro(obj.CodUsuario)) throw new Error('Código do usuário é inválido');
+        else obj.CodUsuario = `'${obj.CodUsuario}'`;
+        if (!validarParametro(obj.CodEmpresa)) throw new Error('Código da empresa é inválido');
+        else obj.CodEmpresa = `'${obj.CodEmpresa}'`;
+        if (!validarParametro(obj.NomeCliente)) throw new Error('Nome do cliente é inválido');
+        else obj.NomeCliente = `'${obj.NomeCliente}'`;
+        if (!validarParametro(obj.Problema)) throw new Error('Problema é inválido');
+        else obj.Problema = `'${obj.Problema}'`;
+        if (!validarParametro(obj.Solucao)) throw new Error('Solução é inválida');
+        else obj.Solucao = `'${obj.Solucao}'`;
+        if (!validarParametro(obj.Assunto)) throw new Error('Assunto é inválido');
+        else obj.Assunto = `'${obj.Assunto}'`;
+        if (!validarParametro(obj.CodSistema)) throw new Error('Código do sistema é inválido');
+        else obj.CodSistema = `'${obj.CodSistema}'`;
+        if (!validarParametro(obj.CodMeioComunicacao)) throw new Error('Código do meio de comunicação é inválido');
+        else obj.CodMeioComunicacao = `'${obj.CodMeioComunicacao}'`;
+        if (!validarParametro(obj.DataCriacao)) throw new Error('Data de criação é inválida');
+        else obj.DataCriacao = `'${setDataSQL(obj.DataCriacao)}'`;
+        if (!validarParametro(obj.DataInicio)) throw new Error('Data de início é inválida');
+        else obj.DataInicio = `'${setDataSQL(obj.DataInicio)}'`;
+        if (!validarParametro(obj.DataFim)) throw new Error('Data de fim é inválida');
+        else obj.DataFim = `'${setDataSQL(obj.DataFim)}'`;
         if (!validarParametro(obj.Plantao)) obj.Plantao = 0;
 
         const retUpdate = await qryUpdate(obj);
