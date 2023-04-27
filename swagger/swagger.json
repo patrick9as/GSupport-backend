@@ -1,54 +1,81 @@
 {
     "openapi": "3.0.0",
     "info": {
-      "title": "Minha API",
-      "version": "1.0.0"
+        "title": "Gsupport",
+        "version": "1.0.0",
+        "description": "Documentação Gsupport"
     },
-    "paths": {
-      "/atendimentos": {
-        "get": {
-          "summary": "Retorna uma lista de atendimentos",
-          "responses": {
-            "200": {
-              "description": "OK"
-            }
-          }
-        },
-        "post": {
-          "summary": "Cria um novo atendimento",
-          "requestBody": {
-            "description": "Dados do usuário",
-            "required": true,
-            "content": {
-              "multipart/form-data:": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "email": {
-                      "type": "string"
-                    },
-                    "image":{
-                        "type": "string",
-                        "format": "binary"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "Criado"
-            },
-            "400": {
-              "description": "Requisição inválida"
-            }
-          }
+    "servers": [
+        {
+            "url": "http://gsupport.gsoft.com/api",
+            "description": "Servidor em produção"
         }
-      }
+    ],
+    "tags": [
+        {
+            "name": "atendimentos"
+        }
+    ],
+    "paths": {
+        "/atendimentos": {
+            "get": {
+                "tags": [
+                    "atendimentos"
+                ],
+                "summary": "Retorna uma lista de atendimentos",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "atendimentos"
+                ],
+                "summary": "Cria um novo atendimento",
+                "requestBody": {
+                    "description": "Dados do usuário",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data:": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Criado"
+                    },
+                    "400": {
+                        "description": "Requisição inválida"
+                    }
+                }
+            }
+        },
+        "/empresas": {
+            "get": {
+                "summary": "Retorna uma lista de atendimentos",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
     }
-  }
-  
+}
