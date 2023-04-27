@@ -1,6 +1,6 @@
 const sql = require('../db.js');
 
-async function qryValidarUsuario (obj) {
+async function qryUsuarios (obj) {
 let script = `SELECT * FROM sup.usuarios`;
     script += `\nWHERE Usuario = '${obj.Usuario}' AND Senha = '${obj.Senha}'`;
 
@@ -11,5 +11,5 @@ let script = `SELECT * FROM sup.usuarios`;
 }
 
 module.exports = {
-    qryValidarUsuario
+    qryUsuarios
 }

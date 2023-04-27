@@ -34,7 +34,7 @@ async function convertImageToWebp(file){
     return result
 }
 
-function setTextoQuotedSQL(texto) {
+function setQuotedTextSQL(texto) {
     if (texto == null || texto == undefined)
         texto = `'%%'`;
     else
@@ -76,7 +76,7 @@ function setDataSQL(data) {
     return data;
 }
 
-function validarParametro(field) {
+function checkField(field) {
     if (field == null || field == undefined)
         return false;
     else
@@ -89,7 +89,7 @@ module.exports = {
     generateUuidImage,
     getExtension,
     convertImageToWebp,
-    setTextoQuotedSQL,
+    setQuotedTextSQL,
     setDataSQL,
-    validarParametro
+    checkField
 };

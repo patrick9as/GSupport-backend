@@ -1,4 +1,4 @@
-const { qryValidarUsuario } = require('../model/LoginModel');
+const { qryUsuarios } = require('../model/LoginModel');
 const { Encrypt } = require('../helper');
 
 
@@ -6,12 +6,12 @@ async function Login(req, res) {
     try {
         let obj = { Usuario, Senha } = req.body
                 
-        const resValidarUsuario = await qryValidarUsuario(obj);
-        const senhaHash = await Encrypt(obj.Senha);
+        const returnQryUsuarios = await qryUsuarios(obj);
+        const passwordHash = await Encrypt(obj.Senha);
 
         if (resValidarUsuario.recordsets[0].length > 0) {
-            const senhaHash = await Encrypt(obj.Senha);
-            res.status(200).send({userData: resValidarUsuario.recordset[0], senhaHash});
+            const passwordHash = await Encrypt(obj.Senha);
+            res.status(200).send({userData: returnQryUsuarios.recordset[0], passwordHash});
         }
         else
             res.status(404).send('Usuário não encontrado!');

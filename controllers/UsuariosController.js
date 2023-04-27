@@ -1,6 +1,6 @@
 const sql = require('../db')
 
-async function Consultar(req, res){
+async function readRecord(req, res){
     const {id} = req.query
     const query = id ? `select * from sup.usuarios where codigo = ${id}` : 'select * from sup.usuarios' 
     try {
@@ -16,4 +16,4 @@ async function Consultar(req, res){
     }
 }
 
-module.exports = {Consultar}
+module.exports = {readRecord}
