@@ -17,7 +17,7 @@ routes.get('/atendimentos', atendimentosController.readRecord);
 routes.post('/atendimentos', upload.array('image', limitImage), atendimentosController.createRecord);
 routes.post('/atendimentos/update', atendimentosController.updateRecord);
 
-//Imagens
+// Imagens
 // routes.post('/imagens', upload.array('image', limitImage), imagensController.Inserir);
 // routes.post('/imagens', imagensController.DeletarImagens);
 
