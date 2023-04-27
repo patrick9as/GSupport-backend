@@ -1,5 +1,4 @@
 const sql = require('../db.js');
-const { uploadFile, getObjectSignedUrl } = require('../aws/s3');
 
 async function qryAtendimentos(obj) {
     let script = `DECLARE @Codigo VARCHAR(MAX) = ${obj.Codigo}, `;
@@ -69,17 +68,17 @@ async function qryAtendimentos(obj) {
     return retorno.recordset;
 }
 
-async function querySelectImage(codigo){
+async function querySelectImagens(codigo){
     // console.log(`***Entrou na funcao querySelectImage`);
 
     let script = `select Imagem from sup.imagens where CodAtendimento = ${codigo}`
 
-    // const startTime = new Date().getTime();
+    const startTime = new Date().getTime();
     result = await sql.query(script)
 
-    // const endTime = new Date().getTime();
-    // const executionTime = endTime - startTime;
-    // console.log(`script de select imagem executado em ${executionTime / 1000} segundos`);
+    const endTime = new Date().getTime();
+    const executionTime = endTime - startTime;
+    console.log(`script de select imagem executado em ${executionTime / 1000} segundos`);
 
     // console.log(`***Saiu da funcao querySelectImage`);
     
@@ -193,5 +192,5 @@ module.exports = {
     qryInsert,
     qryInsertImagem,
     qryUpdate,
-    querySelectImage
+    querySelectImagens
 }

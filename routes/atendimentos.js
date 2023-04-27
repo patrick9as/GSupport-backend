@@ -12,18 +12,23 @@ const storage = multer.memoryStorage()
 const upload = multer({storage})
 const limitImage = 10
 
-routes.get('/atendimentos', atendimentosController.Consultar);
-routes.post('/atendimentos', upload.array('image', limitImage), atendimentosController.Inserir);
-routes.post('/atendimentos/update', atendimentosController.Atualizar);
+// Atendimentos
+routes.get('/atendimentos', atendimentosController.readRecord);
+routes.post('/atendimentos', upload.array('image', limitImage), atendimentosController.createRecord);
+routes.post('/atendimentos/update', atendimentosController.updateRecord);
+
+//Imagens
+// routes.post('/imagens', upload.array('image', limitImage), imagensController.Inserir);
+// routes.post('/imagens', imagensController.DeletarImagens);
 
 // Usuarios
-routes.get('/usuarios', usuarioController.Consultar);
+routes.get('/usuarios', usuarioController.readRecord);
 
 // Login
 routes.post('/login', loginController.Login);
 
 // Empresas
-routes.get('/empresas', empresasController.Consultar);
+routes.get('/empresas', empresasController.readRecord);
 // routes.post('/empresas', empresasController.Inserir);
 //routes.post('/empresas/update', empresasController.Atualizar);
 
