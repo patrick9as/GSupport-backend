@@ -9,7 +9,7 @@ async function Login(req, res) {
         const returnQryUsuarios = await qryUsuarios(obj);
         const passwordHash = await Encrypt(obj.Senha);
 
-        if (resValidarUsuario.recordsets[0].length > 0) {
+        if (returnQryUsuarios.recordsets[0].length > 0) {
             const passwordHash = await Encrypt(obj.Senha);
             res.status(200).send({userData: returnQryUsuarios.recordset[0], passwordHash});
         }
