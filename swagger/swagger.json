@@ -7,8 +7,8 @@
     },
     "servers": [
         {
-            "url": "http://gsupport.gsoft.com/api",
-            "description": "Servidor em produção"
+            "url": "http://localhost:8080/",
+            "description": "Prod"
         }
     ],
     "tags": [
@@ -25,7 +25,99 @@
                 "summary": "Retorna uma lista de atendimentos",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type":"object",
+                                    "properties": {
+                                        "Total": {
+                                            "type": "number"
+                                        },
+                                        "Result": {
+                                            "type": "object",
+                                            "properties": {
+                                                "Codigo":{
+                                                    "type": "number",
+                                                    "default": 1
+                                                },
+                                                "CodUsuario":{
+                                                    "type": "number",
+                                                    "default": 1
+                                                },
+                                                "CodEmpresa":{
+                                                    "type": "number",
+                                                    "default": 1
+                                                },
+                                                "NomeFantasia":{
+                                                    "type": "string",
+                                                    "default": "Binga"
+                                                },
+                                                "RazaoSocial":{
+                                                    "type": "string",
+                                                    "default": "Binga Eletronics"
+                                                },
+                                                "CNPJ":{
+                                                    "type": "string",
+                                                    "default": "02817287000172"
+                                                },
+                                                "NomeCliente":{
+                                                    "type": "string",
+                                                    "default": "Nelson"
+                                                },
+                                                "Assunto":{
+                                                    "type": "string",
+                                                    "default": "Teste"
+                                                },
+                                                "Problema":{
+                                                    "type": "string",
+                                                    "default": "Teste"
+                                                },
+                                                "Solucao":{
+                                                    "type": "string",
+                                                    "default": "Teste"
+                                                },
+                                                "CodSistema":{
+                                                    "type": "number",
+                                                    "default": "1"
+                                                },
+                                                "Sistema":{
+                                                    "type": "string",
+                                                    "default": "Wincash"
+                                                },
+                                                "CodMeioComunicacao":{
+                                                    "type": "number",
+                                                    "default": "1"
+                                                },
+                                                "MeioComunicacao":{
+                                                    "type": "string",
+                                                    "default": "Fax"
+                                                },
+                                                "DataCriacao":{
+                                                    "type": "string",
+                                                    "default": "2023-04-29T22:17:00.000Z"
+                                                },
+                                                "DataInicio":{
+                                                    "type": "string",
+                                                    "default": "2023-04-29T22:17:00.000Z"
+                                                },
+                                                "DataFim":{
+                                                    "type": "string",
+                                                    "default": "2023-04-29T22:17:00.000Z"
+                                                },
+                                                "Plantao":{
+                                                    "type": "boolean",
+                                                    "default": "true"
+                                                },
+                                                "Imagens":{
+                                                    "type": "array"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -42,15 +134,65 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "email": {
-                                        "type": "string"
+                                    "data": {
+                                        "type": "object",
+                                        "properties": {
+                                            "CodUsuario": {
+                                                "type": "number",
+                                                "default" : "1"
+                                            },
+                                            "CodEmpresa": {
+                                                "type": "number",
+                                                "default" : "1"
+                                            },
+                                            "NomeCliente": {
+                                                "type": "string",
+                                                "default" : "Nelson"
+                                            },
+                                            "Problema": {
+                                                "type": "string",
+                                                "default" : "Teste"
+                                            },
+                                            "Solucao": {
+                                                "type": "string",
+                                                "default" : "Teste"
+                                            },
+                                            "Assunto": {
+                                                "type": "string",
+                                                "default" : "Teste"
+                                            },
+                                            "CodSistema": {
+                                                "type": "number",
+                                                "default" : "1"
+                                            },
+                                            "CodMeioComunicacao": {
+                                                "type": "number",
+                                                "default" : "1"
+                                            },
+                                            "DataCriacao": {
+                                                "type": "string",
+                                                "default" : "2023-04-29 22:17:00"
+                                            },
+                                            "DataInicio": {
+                                                "type": "string",
+                                                "default" : "2023-04-29 22:17:00"
+                                            },
+                                            "DataFim": {
+                                                "type": "string",
+                                                "default" : "2023-04-29 22:17:00"
+                                            },
+                                            "Plantao": {
+                                                "type": "number",
+                                                "default" : "1"
+                                            }
+                                        }
                                     },
                                     "image": {
-                                        "type": "string",
-                                        "format": "binary"
+                                        "type": "array",
+                                        "items" : {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
                                     }
                                 }
                             }
@@ -59,7 +201,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Criado"
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Requisição inválida"
