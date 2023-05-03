@@ -12,7 +12,7 @@ async function qryAtendimentos(obj) {
 
     script += `\n\nSELECT`;
     //Campos
-    script += `\n   a.Codigo, a.CodUsuario,`;
+    script += `\n   a.Codigo, a.CodUsuario, u.Usuario,`;
     script += `\n   a.CodEmpresa, e.NomeFantasia, e.RazaoSocial, e.CNPJ,`;
     script += `\n   a.NomeCliente, a.Assunto, a.Problema, a.Solucao,`;
     script += `\n   a.CodSistema, s.Sistema,`;
