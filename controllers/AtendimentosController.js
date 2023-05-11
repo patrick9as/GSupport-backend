@@ -135,6 +135,7 @@ async function createRecord(req, res) {
 async function updateRecord(req, res) {
     try {
         let obj = {
+            Codigo = null,
             CodUsuario = null,
             CodEmpresa = null,
             NomeCliente = null,
