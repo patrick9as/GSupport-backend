@@ -44,4 +44,14 @@ async function deleteFile(key){
     const command = new DeleteObjectCommand(params)
     return await client.send(command)
 }
-module.exports = {uploadFile, getObjectSignedUrl, deleteFile}
+
+async function getImageObj (key){
+    const params = {
+        Bucket: bucketName,
+        Key: key
+    }
+
+    const command = new GetObjectCommand(params)
+    return await client.send(command)
+}
+module.exports = {uploadFile, getObjectSignedUrl, deleteFile, getImageObj}

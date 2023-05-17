@@ -4,6 +4,7 @@ const atendimentosController = require('../controllers/AtendimentosController');
 const usuarioController  = require('../controllers/UsuariosController');
 const loginController = require('../controllers/LoginController');
 const empresasController = require('../controllers/EmpresasController');
+const imageController = require('../controllers/imageController')
 
 // multer config
 const multer = require('multer')
@@ -19,6 +20,7 @@ routes.post('/atendimentos/update', atendimentosController.updateRecord);
 
 // Imagens
 // routes.post('/imagens', upload.array('image', limitImage), imagensController.Inserir);
+routes.post('/imagens/delete', imageController.deleteImage)
 // routes.post('/imagens', imagensController.DeletarImagens);
 
 // Usuarios
